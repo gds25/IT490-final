@@ -9,6 +9,7 @@ h1  { margin: 25px 0; font: 18px Georgia, Serif; text-transform: uppercase; lett
 
 #quiz input {
     vertical-align: middle;
+    white-space: pre-wrap;
 }
 
 #quiz ol {
@@ -29,4 +30,19 @@ h1  { margin: 25px 0; font: 18px Georgia, Serif; text-transform: uppercase; lett
 
 #results {
     font: 44px Georgia, Serif;
+}
+
+
+#topnav a {
+  float: left;		
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  background-color: #222;
+}
+
+#topnav a:hover {
+  background-color: #111;
 }
