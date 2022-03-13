@@ -8,6 +8,9 @@
 <body>
 
 	<div id="page-wrap">
+        <div id="topnav">
+            <?php include 'navbar.php';?>
+        </div>
 
 		<h1>What is Your Anime Genre</h1>
 		

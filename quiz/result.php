@@ -12,6 +12,9 @@
 <body>
 
 	<div id="page-wrap">
+        <div id="topnav">
+            <?php include 'navbar.php';?>
+        </div>
 
 		<h1>Results</h1>
 		
