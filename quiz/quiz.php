@@ -23,7 +23,7 @@
                     <h3>What was your First Anime?</h3>
                     
                     <div>
-                        <input type="radio" name="question-1-answers" id="question-1-answers-A" value="A" />
+                        <input type="radio" name="question-1-answers" id="question-1-answers-A" value="A" required/>
                         <label for="question-1-answers-A">Naruto</label>
                     </div>
                     
@@ -69,7 +69,7 @@
                     <h3>Favorite Ice Cream Flavor</h3>
                     
                     <div>
-                        <input type="radio" name="question-2-answers" id="question-2-answers-A" value="A" />
+                        <input type="radio" name="question-2-answers" id="question-2-answers-A" value="A" required/>
                         <label for="question-2-answers-A">Coffee</label>
                     </div>
                     
@@ -120,7 +120,7 @@
                     <h3>Your Favorite Time of Day</h3>
                     
                     <div>
-                        <input type="radio" name="question-3-answers" id="question-3-answers-A" value="A" />
+                        <input type="radio" name="question-3-answers" id="question-3-answers-A" value="A" required/>
                         <label for="question-3-answers-A">Early Dusk</label>
                     </div>
                     
@@ -171,7 +171,7 @@
                     <h3>Favorite Color</h3>
                     
                     <div>
-                        <input type="radio" name="question-4-answers" id="question-4-answers-A" value="A" />
+                        <input type="radio" name="question-4-answers" id="question-4-answers-A" value="A" required/>
                         <label for="question-4-answers-A">Navy</label>
                     </div>
                     
@@ -222,7 +222,7 @@
                     <h3>Pick a Super-Power</h3>
                     
                     <div>
-                        <input type="radio" name="question-5-answers" id="question-5-answers-A" value="A" />
+                        <input type="radio" name="question-5-answers" id="question-5-answers-A" value="A" required/>
                         <label for="question-5-answers-A">Invisability</label>
                     </div>
                     
@@ -280,7 +280,7 @@
                     <h3>Pick a Number</h3>
                     
                     <div>
-                        <input type="radio" name="question-6-answers" id="question-6-answers-A" value="A" />
+                        <input type="radio" name="question-6-answers" id="question-6-answers-A" value="A" required/>
                         <label for="question-6-answers-A">420 - HAHA Weed Number</label>
                     </div>
                     
