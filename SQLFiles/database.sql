@@ -26,7 +26,8 @@ CREATE TABLE IF NOT EXISTS anime (
 	rating varchar(255) DEFAULT NULL, 
 	genre varchar(255) DEFAULT NULL, 
 	trailer varchar(255) DEFAULT NULL, 
-	synopsis varchar(255) DEFAULT NULL
+	synopsis varchar(255) DEFAULT NULL,
+	userRatings int NOT NULL
 );
 
 
