@@ -1,3 +1,14 @@
+<?php
+    require('session.php');
+    
+    if(!isset($_SESSION['username'])){
+        echo "<script>alert('Please log in first!')</script>";
+        header("Refresh: .1; url=index.php");
+    }
+
+
+?>
+
 <!DOCTYPE html>
  <html>
  <body>

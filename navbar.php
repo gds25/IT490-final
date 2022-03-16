@@ -5,7 +5,7 @@
   <a href="profile.php">Profile</a>
   <a href="forums.php">Forums</a>
   <a href="quiz.php">Quiz</a>
-  <a href="signin.php" align="right">Sign in</a>
+  <a href="login.php" align="right">Sign in</a>
 
 
  <form action="search.php" method="post">

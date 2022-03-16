@@ -1,22 +1,47 @@
 <?php
-    
+
+    require('session.php');
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
 
-    require('databasefilesNEW/publisher.php');
+    require('SQLFiles/SQLPublish.php');
     
     if( !empty($_POST['Username']) && !empty($_POST['Password']) ){
         
-        $query = "SELECT username FROM Users WHERE username = '" . $_POST['Username'] . "' and password = '" . md5($_POST['Password']) . "';";
+        $queryValues = array();
+
+        $queryValues['type'] = 'login';
+        $queryValues['username'] = $_POST['Username'];
+        $queryValues['password'] = md5($_POST['Password']);
         
-        printf(publisher($query));
+        print_r($queryValues);
+        
+        $results = publisher($queryValues);
+
+        if($results == 0){
+            echo "<script>alert('Please enter right credentials');</script>";
+        }
+
+        if($results == 1){
+            echo "Great, we found you: ";
+            
+            if(isset($_SESSION)){
+                session_destroy();
+                session_start();
+            }else{
+                session_start();
+            }
+            $_SESSION['username'] = $_POST['Username'];
+            echo $_SESSION['username'];
+            header("Refresh: 2; url=index.php");
+        }
     }
 ?>
 
 <DOCTYPE! HTML>
     <html>
-        <head>
+    <head>
         
         <title>AnimeList - Login</title>
         <link rel="stylesheet" href="signuplogin.css">
@@ -37,7 +62,8 @@
             </form>
         
         <p1>Don't have an account?<p1>
-        <a href="signup.php">Sign up</a>
+        <a href="signup.php">Sign up</a><br>
+        <a href="index.php">Home</a>
         </body>
     
     </html>

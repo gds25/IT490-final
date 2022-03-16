@@ -8,10 +8,11 @@ require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
 
-function publisher($query){
-    $client = new rabbitMQClient("testRabbitMQ.ini","testServer");
-    $response = $client->send_request($query);
-    //$response = $client->publish($request);
+function publisher($array){
+  
+  $client = new rabbitMQClient("testRabbitMQ.ini","testServer");
+  $response = $client->send_request($array);
+
 
   return $response;
 }

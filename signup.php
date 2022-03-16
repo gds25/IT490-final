@@ -1,18 +1,42 @@
 
 <?php
+    require("session.php");
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
     
-    require('databasefilesNEW/publisher.php');
+    require('SQLFiles/SQLPublish.php');
     
     if(!empty($_POST['Username']) && !empty($_POST['Password']) && !empty($_POST['First_Name']) && !empty($_POST['Last_Name']) && !empty($_POST['Email'])){
+
+        $queryValues = array();
         
-        $query = "INSERT INTO Users (username, password, firstName, lastName, email) VALUES ('" .
-            $_POST['Username'] . "', '" . md5($_POST['Password']) . "', '" . $_POST['First_Name'] . "', '" . $_POST['Last_Name'] . "', '" . $_POST['Email'] . "');";
+        $queryValues['type'] = 'signup';
+        $queryValues['username'] = $_POST['Username'];
+        $queryValues['password'] = md5($_POST['Password']);
+        $queryValues['firstName'] = $_POST['First_Name'];
+        $queryValues['lastName'] = $_POST['Last_Name'];
+        $queryValues['email'] = $_POST['Email'];
 
-        echo publisher($query);
+        print_r($queryValues);
+        $result = publisher($queryValues);
 
+        if($result == 1){
+            echo "Just signed up: ";
+            
+            if(isset($_SESSION)){
+                session_destroy();
+                session_start();
+            }else{
+                session_start();
+            }
+
+            $_SESSION['username'] = $_POST['Username'];
+            echo $_SESSION['username'];
+            header("Refresh: 2; url=index.php");
+        }else{
+            echo $result;
+        }
     }
 
 ?>
@@ -43,6 +67,7 @@
         </form><br>
         
         <p1>Have an account?<p1>
-        <a href="login.php">Log in</a>
+        <a href="login.php">Log in</a><br>
+        <a href="index.php">Home</a>
     </body>
 </html>
