@@ -23,7 +23,7 @@ $tablename = "anime";
 
 // Create connection
 $conn = mysqli_connect($servername, $username, $password, $dbname);
-$stmt = $conn->prepare("INSERT INTO anime (mal_id, title, img, rating, genre, trailer) VALUES (?, ?, ?, ?, ?, ?)");
+$stmt = $conn->prepare("INSERT INTO anime (mal_id, title, img, rating, genre, trailer, synopsis) VALUES (?, ?, ?, ?, ?, ?, ?)");
 // Check connection
 if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
@@ -38,6 +38,8 @@ foreach ($arr['data'] as $anime)
 			$title = $anime['title']; 
 			$trailer = $anime['trailer']['url'];
 			$rating = $anime['rating'];
+			$synopsis = $anime['synopsis'];
+			
 			$genreTemp = array();
 			//populate genres
 			foreach ($anime['genres'] as $genres){
@@ -73,7 +75,7 @@ foreach ($arr['data'] as $anime)
 
 			if($chkstmt->num_rows == 0){
 				// row not found, do stuff...
-				$stmt->bind_param('ssssbs' ,$mal_id, $title, $img, $rating, $genre, $trailer);
+				$stmt->bind_param('ssssbss' ,$mal_id, $title, $img, $rating, $genre, $trailer, $synopsis);
 				$stmt->execute();
 				
 			} else {
