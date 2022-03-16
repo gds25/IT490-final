@@ -75,7 +75,7 @@ foreach ($arr['data'] as $anime)
 
 			if($chkstmt->num_rows == 0){
 				// row not found, do stuff...
-				$stmt->bind_param('ssssbss' ,$mal_id, $title, $img, $rating, $genre, $trailer, $synopsis);
+				$stmt->bind_param('sssssss' ,$mal_id, $title, $img, $rating, $genre, $trailer, $synopsis);
 				$stmt->execute();
 				
 			} else {
