@@ -9,6 +9,26 @@ require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
 
 
+function apiRequest($array){
+  $mysql = new mysqli('localhost', 'dran', 'pharmacy', 'animeDatabase');
+
+  if ($mysql -> connect_errno){
+      return "Could not connect to mysql: ". $mysql->connect_error;
+      exit();
+  }
+
+  $stmt = $mysql->prepare("INSERT INTO anime (mal_id, title, img, rating, genre, trailer, synopsis) VALUES (?, ?, ?, ?, ?, ?, ?)");
+  $stmt->bind_param('ssssbss' ,$array['mal_id'], $array['title'], $array['img'], $array['rating'], $array['genre'], $array['trailer'], $array['synopsis']);
+			
+  if($stmt->execute()){
+    return 1;
+  }
+  if(!$stmt->execute){
+    return $stmt->error;
+  }
+}
+
+
 function sqlLogIn($array){
 
   $mysql = new mysqli('localhost', 'dran', 'pharmacy', 'animeDatabase');
@@ -62,6 +82,15 @@ function requestProcessor($array)
       print_r($array);
       echo "Signing up" . PHP_EOL;
       return sqlSignUp($array);
+  }
+
+  if($array['type'] == 'apiRequest'){
+    foreach($array as $anime){
+      if($anime != 'apiRequest' && $anime != ''){
+        print_r($anime);
+        echo apiRequest($anime);
+      }
+    }
   }
 
 }
