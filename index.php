@@ -33,9 +33,9 @@
       for (let i = 0; i < 5; i++) {
           let div = document.createElement("div");
           let animeLink = document.createElement('a');
-	  animeLink.setAttribute('href', '#profile');
-	  animeLink.key = data.top[i].mal_id;
-	  animeLink.innerText = data.top[i].title;	  
+	        animeLink.setAttribute('href', 'template.php?id=' + data.top[i].mal_id);
+	        animeLink.key = data.top[i].mal_id;
+	        animeLink.innerText = data.top[i].title;	  
           div.appendChild(animeLink);
           animeList.appendChild(div);
       }   
