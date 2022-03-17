@@ -54,7 +54,15 @@
  <form action="search.php" method="post">
    <input id="animesearch" name="animesearch" type="text" align="right"/>
    <input type="submit" value="Search Again"/>
- </form>
+  
+   <label for="filter">Filter by:</label>
+   <select name="orderby" id="filter">
+    <option value="title">Title</option>
+    <option value="genre">Genre</option>
+    <option value="rating">Rating</option> 
+   </select>
+ 
+</form>
 
   <div id ="search">
   </div>
