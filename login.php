@@ -7,23 +7,24 @@
 
     require('SQLFiles/SQLPublish.php');
     
+    //Checks if form submissions are empty
     if( !empty($_POST['Username']) && !empty($_POST['Password']) ){
         
+        //Creating array and attaching values to send to RabbitMQ
         $queryValues = array();
 
         $queryValues['type'] = 'login';
         $queryValues['username'] = $_POST['Username'];
         $queryValues['password'] = md5($_POST['Password']);
         
+        //Print Array, Publiush to RabbitMQ and fetch Results
         print_r($queryValues);
-        
-        $results = publisher($queryValues);
+        $result = publisher($queryValues);
+        print_r($result);
 
-        if($results == 0){
-            echo "<script>alert('Please enter right credentials');</script>";
-        }
-
-        if($results == 1){
+        //Checks password to hashed password in databse. If okay, logs you in.
+        if(password_verify($_POST['Password'], $result[1])){
+            
             echo "Great, we found you: ";
             
             if(isset($_SESSION)){
@@ -35,6 +36,10 @@
             $_SESSION['username'] = $_POST['Username'];
             echo $_SESSION['username'];
             header("Refresh: 2; url=index.php");
+        
+        //Alerts if invalid log in credentials
+        }else{
+            echo "<script>alert('Please enter right credentials');</script>";
         }
     }
 ?>

@@ -7,6 +7,7 @@ require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
 
+//Request processor for calling API
 function requestProcessor($request)
 {
   $request = urlencode($request);
@@ -50,6 +51,7 @@ function requestProcessor($request)
     array_push($animeResults, $anime_array);
   }
 
+  echo "Retrieved from API: " . PHP_EOL;
   print_r($animeResults);
   return $animeResults;
 }
