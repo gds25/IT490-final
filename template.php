@@ -143,6 +143,8 @@ function changeRating($value) {
     <p>Leave a review for others</p>
     
     
+
+    
     <form method="post">
         <input type="submit" name="upvote"
                 value="Vote Up" />

@@ -17,6 +17,7 @@
         <?php include 'navbar.php';?>
 </div>
 
+
 <h1 align="center">Anime Database</h1>
 
 <script type = "text/javascript">
