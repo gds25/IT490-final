@@ -105,7 +105,20 @@ $synopsis = $anime['synopsis'];
 <div class="reviews">
     <h3>Did you watch this?</h3>
     <p>Leave a review for others</p>
-    <p>TODO: users can +/- 1 for the rating - this needs to update both the anime's rating and the users genre recomend column in their respective DBs</p>
+<<<<<<< HEAD
+    
+    
+
+    
+    <form method="post">
+        <input type="submit" name="upvote"
+                value="Vote Up" />
+          
+        <input type="submit" name="downvote"
+                value="Vote Down" />
+    </form>
+</div>
+
 
 </div>
 

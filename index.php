@@ -17,6 +17,7 @@
         <?php include 'navbar.php';?>
 </div>
 
+
 <h1 align="center">Anime Database</h1>
 
 <script type = "text/javascript">
@@ -33,7 +34,7 @@
       for (let i = 0; i < 5; i++) {
           let div = document.createElement("div");
           let animeLink = document.createElement('a');
-	  animeLink.setAttribute('href', '#profile');
+          animeLink.setAttribute('href', 'template.php?id=' + data.top[i].mal_id);
 	  animeLink.key = data.top[i].mal_id;
 	  animeLink.innerText = data.top[i].title;	  
           div.appendChild(animeLink);
