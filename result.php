@@ -1,6 +1,10 @@
 <?php
     require('session.php');
     checkLogin();
+    $servername = "127.0.0.1";
+    $username = "root";
+    $password = "";
+    $dbname = "animedatabase";
 ?>
 <!DOCTYPE html>
 <html>
@@ -323,17 +327,24 @@
 
             $maxValKeys = array_keys($results, $max);
             $secondMaxValKeys = array_keys($results, $secondMax);
+            $recomended = implode(", ", $maxValKeys);
+            $user = "test";
+            
+            $conn = mysqli_connect($servername, $username, $password, $dbname);
+            $stmt = $conn->prepare("UPDATE Users SET genreRecomended = ? WHERE username = ?");
+            $stmt->bind_param("ss", $recomended, $user);
+            // Check connection
+            if ($conn->connect_error) {
+              die("Connection failed: " . $conn->connect_error);
+              //error message for logger
+            }
 
+            $stmt->execute();
             
-
-
-            
-            
-            
+            header("Location: /profile.php",TRUE,303);
             
         ?>
-        <p>Your Top Genres: <?php echo implode(", ", $maxValKeys); ?></p>
-        <p>Your Second Top Genres: <?php echo implode(", ", $secondMaxValKeys); ?></p>
+        
 	</div>
 
 </body>

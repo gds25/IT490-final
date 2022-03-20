@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS Users (
 	firstName varchar(255) NOT NULL,
 	lastName varchar(255) NOT NULL,
 	email varchar(255) NOT NULL UNIQUE,
+	genreRecomended varchar(255) DEFAULT NULL,
 	Primary Key (ID)
 );
 
