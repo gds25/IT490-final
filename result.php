@@ -328,7 +328,7 @@
             $maxValKeys = array_keys($results, $max);
             $secondMaxValKeys = array_keys($results, $secondMax);
             $recomended = implode(", ", $maxValKeys);
-            $user = "test";
+            $user = $_SESSION['username'];
             
             $conn = mysqli_connect($servername, $username, $password, $dbname);
             $stmt = $conn->prepare("UPDATE Users SET genreRecomended = ? WHERE username = ?");
