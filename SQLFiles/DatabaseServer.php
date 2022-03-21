@@ -7,7 +7,7 @@ error_reporting(E_ALL);
 require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
-require('DMZPublish.php');
+require_once('DMZPublish.php');
 
 //SQL Connection Parameters
 $hostSQL = 'localhost';
@@ -15,6 +15,22 @@ $userSQL = 'dran';
 $passSQL = 'pharmacy';
 $dbSQL = 'animeDatabase';
 
+//Retrieve information from
+function fetchUserInfo($array){
+  global $hostSQL, $userSQL, $passSQL, $dbSQL;
+  $mysql = new mysqli($hostSQL, $userSQL, $passSQL, $dbSQL);
+  if ($mysql -> connect_errno){
+      return "Could not connect to mysql: ". $mysql->connect_error;
+      exit();
+  }
+  $query = "SELECT * FROM Users WHERE username = '" . $array['username'] . "';";
+  $result = $mysql->query($query);
+  $userInfo = $result->fetch_row();
+  $mysql->close();
+  return $userInfo;
+}
+
+//Updates anime rating according to mal_id
 function changeAnimeRating($array){
   global $hostSQL, $userSQL, $passSQL, $dbSQL;
   $mysql = new mysqli($hostSQL, $userSQL, $passSQL, $dbSQL);
@@ -24,6 +40,25 @@ function changeAnimeRating($array){
   return 1;
 }
 
+//Retrieve topAnime for index.php
+function fetchTopAnime($array){
+  global $hostSQL, $userSQL, $passSQL, $dbSQL;
+  $mysql = new mysqli($hostSQL, $userSQL, $passSQL, $dbSQL);
+  if ($mysql -> connect_errno){
+      return "Could not connect to mysql: ". $mysql->connect_error;
+      exit();
+  }
+  $query = "SELECT * FROM topAnime;";
+  $result = $mysql->query($query);
+  $mysql->close();
+  $anime = array();
+  foreach ($result as $row){
+    array_push($anime, $row);
+  }
+  return $anime;
+}
+
+//For search.php to search for animes by title beginning with
 function searchAnime($array){
   global $hostSQL, $userSQL, $passSQL, $dbSQL;
   $mysql = new mysqli($hostSQL, $userSQL, $passSQL, $dbSQL);
@@ -31,7 +66,7 @@ function searchAnime($array){
       return "Could not connect to mysql: ". $mysql->connect_error;
       exit();
   }
-  $query = "SELECT * FROM anime WHERE title LIKE '%" . $array['title'] . "%' LIMIT 50;";
+  $query = "SELECT * FROM anime WHERE title LIKE '" . $array['title'] . "%' LIMIT 50;";
   $result = $mysql->query($query);
   $mysql->close();
   $anime = array();
@@ -130,44 +165,68 @@ function sqlSignUp($array){
 //Processes request from RabbitMQ Publisher
 function requestProcessor($array){
   
-  if($array['type'] == 'changeRating'){
-    echo "Changing rating for " . $array['mal_id'];
-    print_r($array);
-    return changeAnimeRating($array);
-  }
-
-  if($array['type'] == 'searchAnime'){
-    echo "Searching for: " . PHP_EOL;
-    print_r($array);
-    DMZPublish('https://api.jikan.moe/v4/anime?q=' . urlencode($array['title']));
-    $anime = searchAnime($array);
-    if(!$anime){
-      return  "No anime found";
-    }else{
-      return $anime;
+  if(array_key_exists('type', $array)){
+    
+    //Fetch User info for profile.php
+    if($array['type'] == 'fetchUserInfo'){
+      echo "Retrieving User info for: " . PHP_EOL;
+      print_r($array);
+      return fetchUserInfo($array);
     }
-  }
 
-  //Fetching anime for Template.php
-  if($array['type'] == 'fetchAnime'){
-    echo "Fetching: " . PHP_EOL;
-    print_r($array);
-    return fetchAnime($array);
-  }
-
-  //For login
-  if($array['type'] == 'login'){
+    //Search topAnime Table to print on index.php
+    if($array['type'] == 'fetchTopAnime'){
+      echo "Searching for: " . PHP_EOL;
       print_r($array);
-      echo "Logging in" . PHP_EOL;
-      return sqlLogIn($array);
+      $anime = fetchTopAnime($array);
+      if(!$anime){
+        return  "No anime found";
+      }else{
+        return $anime;
+      }
+    }
 
-  }
-
-  //For signup
-  if($array['type'] == 'signup'){
+    //For template.php in order to change rating of anime by mal_id
+    if($array['type'] == 'changeRating'){
+      echo "Changing rating for " . $array['mal_id'] . PHP_EOL;
       print_r($array);
-      echo "Signing up" . PHP_EOL;
-      return sqlSignUp($array);
+      return changeAnimeRating($array);
+    }
+
+    //Searching anime for search.php
+    if($array['type'] == 'searchAnime'){
+      echo "Searching for: " . PHP_EOL;
+      print_r($array);
+      DMZPublish('https://api.jikan.moe/v4/anime?q=' . urlencode($array['title']));
+      $anime = searchAnime($array);
+      if(!$anime){
+        return  "No anime found";
+      }else{
+        return $anime;
+      }
+    }
+
+    //Fetching anime for Template.php
+    if($array['type'] == 'fetchAnime'){
+      echo "Fetching: " . PHP_EOL;
+      print_r($array);
+      return fetchAnime($array);
+    }
+
+    //For login
+    if($array['type'] == 'login'){
+        print_r($array);
+        echo "Logging in" . PHP_EOL;
+        return sqlLogIn($array);
+
+    }
+
+    //For signup
+    if($array['type'] == 'signup'){
+        print_r($array);
+        echo "Signing up" . PHP_EOL;
+        return sqlSignUp($array);
+    }
   }
 }
 

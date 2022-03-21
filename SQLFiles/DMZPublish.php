@@ -25,8 +25,9 @@ function DMZPublish($link){
     print_r($array);
     //Preparing statement and binding the parameters
     $stmt = $mysql->prepare("INSERT INTO anime (mal_id, title, img, rating, genre, trailer, synopsis) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    //$stmt = $mysql->prepare("INSERT INTO topAnime (mal_id, title, img, rating, genre, trailer, synopsis) VALUES (?, ?, ?, ?, ?, ?, ?)");
     $stmt->bind_param('sssssss' ,$array['mal_id'], $array['title'], $array['img'], $array['rating'], $array['genre'], $array['trailer'], $array['synopsis']);
-    //Returns 1 if the anime is put into databse. Otherwise, return error
+    //Returns 1 if the anime is put into database. Otherwise, return error
     if($stmt->execute()){
       echo "Okay";
     }else{
@@ -35,6 +36,4 @@ function DMZPublish($link){
   }
   $mysql->close();
 }
-
-//DMZPublish('https://api.jikan.moe/v4/anime?q=hunter+x+hunter&limit=20');
 ?>
