@@ -9,7 +9,6 @@ CREATE TABLE IF NOT EXISTS Users (
 	firstName varchar(255) NOT NULL,
 	lastName varchar(255) NOT NULL,
 	email varchar(255) NOT NULL UNIQUE,
-	genreRecomended varchar(255) DEFAULT NULL,
 	Primary Key (ID)
 );
 
@@ -29,7 +28,7 @@ CREATE TABLE IF NOT EXISTS anime (
 	genre varchar(255) DEFAULT NULL, 
 	trailer varchar(255) DEFAULT NULL, 
 	synopsis text(16777215) DEFAULT NULL,
-	userRatings int NOT NULL, 
+	userRatings int DEFAULT 0,
 	Primary Key(ID)
 );
 

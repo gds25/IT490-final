@@ -18,56 +18,27 @@
   clear: both;
 }
 </style>
+
 <?php
-//how to post data for what we need
-//https://stackoverflow.com/questions/426310/how-do-you-post-data-with-a-link
+  
+include('SQLFiles/SQLPublish.php');
 
-//temp for me
-$id = $_GET['id'];
-
-//Set up SQL Server info
-$servername = "127.0.0.1";
-$username = "root";
-$password = "";
-$dbname = "anime-db";
-$tablename = "anime";
-
-//start sql stuff
-
-
-// Create connection
-$conn = mysqli_connect($servername, $username, $password, $dbname);
-$stmt = $conn->prepare("SELECT * FROM anime WHERE mal_id = ?");
-
-// Check connection
-if ($conn->connect_error) {
-  die("Connection failed: " . $conn->connect_error);
-  //error message for logger
+if(isset($_GET['mal_id'])){
+  $anime = publisher(array(
+    'type' =>  'fetchAnime',
+    'mal_id' => $_GET['mal_id']
+  ));
+  
+  print_r($anime);
+  
+  $mal_id = $anime[1];
+  $img = $anime[3];
+  $title = $anime[2]; 
+  $trailer = $anime[6];
+  $rating = $anime[4];
+  $synopsis = $anime[7];
+  $userRatings = $anime[8];
 }
-
-$stmt->bind_param("s", $id);
-$stmt->execute();
-
-$result = $stmt->get_result(); // get the mysqli result
-$anime = $result->fetch_assoc(); // fetch data  - comes as array
-
-
-$conn->close();
-
-$mal_id = $anime['mal_id'];
-$img = $anime['img'];
-$title = $anime['title']; 
-$trailer = $anime['trailer'];
-$genres = $anime['genre'];
-$rating = $anime['rating'];
-$synopsis = $anime['synopsis'];
-$userRatings = $anime['userRatings'];
-
-$genres = substr($genres, 2, -2);
-$genres = str_replace("\",\"", ", ", $genres);
-
- //updating user rating
-
 
 if(isset($_POST['upvote'])) {
   unset($_POST['upvote']);
@@ -77,21 +48,18 @@ else if(isset($_POST['downvote'])) {
   unset($_POST['downvote']);
   changeRating(-1);
 }
+
 function changeRating($value) {
-  global $servername, $username, $password, $dbname, $userRatings, $id;
+  global $mal_id, $userRatings;
   $userRatings += $value;
-  $conn = mysqli_connect($servername, $username, $password, $dbname);
-  $stmt = $conn->prepare("UPDATE anime SET userRatings=$userRatings WHERE mal_id = $id");
-  $stmt->execute();
-  if (isset($_POST['upvote'])){
-    echo '
-    <script type="text/javascript">
-    location.reload();
-    </script>';
-    }
-  $conn->close();
+  publisher(array(
+    'type' => 'changeRating',
+    'value' => $userRatings,
+    'mal_id' => $mal_id
+  ));
 }
 ?>
+
 <html>
 <head>
         <meta charset=UTF-8" />
@@ -108,6 +76,7 @@ function changeRating($value) {
 
 <h1 align="center">Anime Database</h1>
 
+
  
 
 <div class="row">
@@ -116,8 +85,7 @@ function changeRating($value) {
   </div>
   <div class="column">
     <h2><?php echo $title ?></h2>
-    <p><b>Synopsis</b>: <?php echo $synopsis ?></p>
-    <p><b>Genres</b>: <?php print_r($genres) ?></p>
+    <p><b>Synopsis</b>: <?php echo $synopsis ?>...</p>
     <p><b>Rating</b>: <?php echo $rating ?></p>
     <p><b>Watch the trailer <a href=<?php echo $trailer ?> target="_blank" rel="noopener noreferrer">Here</a></b> </p>
 
@@ -131,9 +99,7 @@ function changeRating($value) {
 <div class="reviews">
   <h3>Community Rating: <?php echo $userRatings ?></h3>
     <h4>Did you watch this?</h4>
-    <p>Leave a review for others</p>
-
-    
+      <p>Leave a review for others</p>
     
 
     
