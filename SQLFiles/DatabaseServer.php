@@ -1,4 +1,3 @@
-#!/usr/bin/php
 <?php
 
 ini_set('display_errors', 1);
@@ -9,7 +8,7 @@ require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
 
-require('DMZPublish.php');
+require_once('DMZPublish.php');
 
 //SQL Connection Parameters
 $hostSQL = 'localhost';
@@ -17,6 +16,22 @@ $userSQL = 'dran';
 $passSQL = 'pharmacy';
 $dbSQL = 'animeDatabase';
 
+//Retrieve information from
+function fetchUserInfo($array){
+  global $hostSQL, $userSQL, $passSQL, $dbSQL;
+  $mysql = new mysqli($hostSQL, $userSQL, $passSQL, $dbSQL);
+  if ($mysql -> connect_errno){
+      return "Could not connect to mysql: ". $mysql->connect_error;
+      exit();
+  }
+  $query = "SELECT * FROM Users WHERE username = '" . $array['username'] . "';";
+  $result = $mysql->query($query);
+  $userInfo = $result->fetch_row();
+  $mysql->close();
+  return $userInfo;
+}
+
+//Updates anime rating according to mal_id
 function changeAnimeRating($array){
   global $hostSQL, $userSQL, $passSQL, $dbSQL;
   $mysql = new mysqli($hostSQL, $userSQL, $passSQL, $dbSQL);
@@ -26,6 +41,25 @@ function changeAnimeRating($array){
   return 1;
 }
 
+//Retrieve topAnime for index.php
+function fetchTopAnime($array){
+  global $hostSQL, $userSQL, $passSQL, $dbSQL;
+  $mysql = new mysqli($hostSQL, $userSQL, $passSQL, $dbSQL);
+  if ($mysql -> connect_errno){
+      return "Could not connect to mysql: ". $mysql->connect_error;
+      exit();
+  }
+  $query = "SELECT * FROM topAnime;";
+  $result = $mysql->query($query);
+  $mysql->close();
+  $anime = array();
+  foreach ($result as $row){
+    array_push($anime, $row);
+  }
+  return $anime;
+}
+
+//For search.php to search for animes by title beginning with
 function searchAnime($array){
   global $hostSQL, $userSQL, $passSQL, $dbSQL;
   $mysql = new mysqli($hostSQL, $userSQL, $passSQL, $dbSQL);
@@ -33,7 +67,7 @@ function searchAnime($array){
       return "Could not connect to mysql: ". $mysql->connect_error;
       exit();
   }
-  $query = "SELECT * FROM anime WHERE title LIKE '%" . $array['title'] . "%' LIMIT 50;";
+  $query = "SELECT * FROM anime WHERE title LIKE '" . $array['title'] . "%' LIMIT 50;";
   $result = $mysql->query($query);
   $mysql->close();
   $anime = array();
@@ -312,6 +346,25 @@ function showReviews () {
 
 //Processes request from RabbitMQ Publisher
 function requestProcessor($array) {
+   if(array_key_exists('type', $array)){
+
+    //Fetch User info for profile.php
+   if($array['type'] == 'fetchUserInfo'){
+      echo "Retrieving User info for: " . PHP_EOL;
+      print_r($array);
+      return fetchUserInfo($array);
+   }
+  //Search topAnime Table to print on index.php
+   if($array['type'] == 'fetchTopAnime'){
+      echo "Searching for: " . PHP_EOL;
+      print_r($array);
+      $anime = fetchTopAnime($array);
+      if(!$anime){
+        return  "No anime found";
+      }else{
+        return $anime;
+      }
+   }      
   if($array['type'] == 'changeRating'){
     echo "Changing rating for " . $array['mal_id'];
     print_r($array);
@@ -371,11 +424,11 @@ function requestProcessor($array) {
     echo "Show all posts in threads" . PHP_EOL;
     return showPosts($array);
   }
-  
+ }
 }
 
 //Establishing rabbitMQ Server
-$server = new rabbitMQServer("testRabbitMQ.ini","testServer");
+$server = new rabbitMQServer("SQLServer.ini","SQLServer");
 
 echo "SQL Server BEGIN".PHP_EOL;
 $server->process_requests('requestProcessor');
