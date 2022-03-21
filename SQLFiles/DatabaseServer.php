@@ -166,7 +166,8 @@ function sqlSignUp($array){
 
 //add thread to forum
 function addThread ($array) {  //Establishing connection
-  $mysql = new mysqli('localhost', 'gds25', 'Roseli1975', 'animeDatabase');
+  global $hostSQL, $userSQL, $passSQL, $dbSQL;
+  $mysql = new mysqli($hostSQL, $userSQL, $passSQL, $dbSQL);
 
     if ($mysql -> connect_errno){
         return "Could not connect to mysql: ". $mysql->connect_error;
@@ -199,8 +200,8 @@ function addThread ($array) {  //Establishing connection
 
 //get and list all threads in forum
 function showThreads ($array) {
-
- $mysql = new mysqli('localhost', 'gds25', 'Roseli1975', 'animeDatabase');
+global $hostSQL, $userSQL, $passSQL, $dbSQL;
+ $mysql = new mysqli($hostSQL, $userSQL, $passSQL, $dbSQL);
 
     if ($mysql -> connect_errno){
         return "Could not connect to mysql: ". $mysql->connect_error;
@@ -257,7 +258,8 @@ function showThreads ($array) {
 
 //adding posts to forum thread
 function addPost ($array) {
-  $mysql = new mysqli('localhost', 'gds25', 'Roseli1975', 'animeDatabase');
+  global $hostSQL, $userSQL, $passSQL, $dbSQL;
+  $mysql = new mysqli($hostSQL, $userSQL, $passSQL, $dbSQL);
 
     if ($mysql -> connect_errno){
         return "Could not connect to mysql: ". $mysql->connect_error;
@@ -286,7 +288,8 @@ function addPost ($array) {
 
 //get and list all posts in thread
 function showPosts ($array) {
-  $mysql = new mysqli('localhost', 'gds25', 'Roseli1975', 'animeDatabase');
+  global $hostSQL, $userSQL, $passSQL, $dbSQL;
+  $mysql = new mysqli($hostSQL, $userSQL, $passSQL, $dbSQL);
 
     if ($mysql -> connect_errno){
         return "Could not connect to mysql: ". $mysql->connect_error;

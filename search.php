@@ -35,21 +35,28 @@ require('session.php');
 </form>
 
 <?php 
-//include('SQLFiles/SQLPublish.php');
+include('SQLFiles/SQLPublish.php');
 $search = $_POST['animesearch']; 
 
 echo "Showing results for: " . $search . "<br>";
 
 foreach ($_POST['filter'] as $select)
 {
-       $filter.=$select;
+       $filter=$select;
 }
+
+
 
 echo "Filter by: ";
 echo $filter;
 echo "<br><br>";
 $anime = publisher(array('type' => 'searchAnime', 'title' => $search, 'filter' => $filter));
 foreach ($anime as $row){
+  /*
+  foreach(json_decode($row['genre']) as $genre){
+    echo $genre;
+  }
+  */
   echo "<a href=template.php?mal_id=" . $row['mal_id'] . ">" . $row['title'] . "</a><br>";
 }
 ?>
