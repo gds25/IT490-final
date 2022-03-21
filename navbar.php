@@ -16,7 +16,7 @@
    <input type="submit" value="Search Anime">
     
    <label for="filter">Filter by:</label>
-   <select name="orderby" id="filter">
+   <select name="filter[]" id="filter">
     <option value="title">Title</option>
     <option value="genre">Genre</option>
     <option value="rating">Rating</option> 

@@ -23,10 +23,10 @@ require('session.php');
 <br><br><br>
  <form action="search.php" method="post">
    <input id="animesearch" name="animesearch" type="text" align="right"/>
-   <input type="submit" value="Search Again"/>
+   <input type="submit" name = "submit" value="Search Again"/>
   
    <label for="filter">Filter by:</label>
-   <select name="orderby" id="filter">
+   <select name="filter[]" id="filter">
     <option value="title">Title</option>
     <option value="genre">Genre</option>
     <option value="rating">Rating</option> 
@@ -35,10 +35,20 @@ require('session.php');
 </form>
 
 <?php 
-include('SQLFiles/SQLPublish.php');
+//include('SQLFiles/SQLPublish.php');
 $search = $_POST['animesearch']; 
-echo "Showing results for: " . $search . "<br><br>";
-$anime = publisher(array('type' => 'searchAnime', 'title' => $search));
+
+echo "Showing results for: " . $search . "<br>";
+
+foreach ($_POST['filter'] as $select)
+{
+       $filter.=$select;
+}
+
+echo "Filter by: ";
+echo $filter;
+echo "<br><br>";
+$anime = publisher(array('type' => 'searchAnime', 'title' => $search, 'filter' => $filter));
 foreach ($anime as $row){
   echo "<a href=template.php?mal_id=" . $row['mal_id'] . ">" . $row['title'] . "</a><br>";
 }

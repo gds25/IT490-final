@@ -1,3 +1,4 @@
+#!/usr/bin/php
 <?php
 
 ini_set('display_errors', 1);
@@ -12,8 +13,8 @@ require_once('DMZPublish.php');
 
 //SQL Connection Parameters
 $hostSQL = 'localhost';
-$userSQL = 'dran';
-$passSQL = 'pharmacy';
+$userSQL = 'gds25';
+$passSQL = 'Roseli1975';
 $dbSQL = 'animeDatabase';
 
 //Retrieve information from
@@ -67,7 +68,7 @@ function searchAnime($array){
       return "Could not connect to mysql: ". $mysql->connect_error;
       exit();
   }
-  $query = "SELECT * FROM anime WHERE title LIKE '" . $array['title'] . "%' LIMIT 50;";
+  $query = "SELECT * FROM anime WHERE title LIKE '" . $array['title'] . "%' ORDER BY " . $array['filter'] . " LIMIT 50;";
   $result = $mysql->query($query);
   $mysql->close();
   $anime = array();
