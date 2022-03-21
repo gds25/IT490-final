@@ -1,4 +1,8 @@
 <?php
+    require_once("apiScript.php");
+
+    //$data_json = file_get_contents('https://api.jikan.moe/v4/schedules');
+    
     // database credentials
     $servername = "";
     $username = "";
