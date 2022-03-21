@@ -56,7 +56,7 @@ create table if not exists threads(
 
 create table if not exists posts (
     post_id int not null unique auto_increment,
-    topic_id int not null,
+    thread_id int not null,
     post_content text(16777215) not null,
     post_time datetime not null,
     post_owner varchar (150) not null,
