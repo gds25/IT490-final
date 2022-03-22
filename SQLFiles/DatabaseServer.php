@@ -12,8 +12,8 @@ require_once('DMZPublish.php');
 
 //SQL Connection Parameters
 $hostSQL = 'localhost';
-$userSQL = 'dran';
-$passSQL = 'pharmacy';
+$userSQL = 'gds25';
+$passSQL = 'Roseli1975';
 $dbSQL = 'animeDatabase';
 
 //Retrieve information from
@@ -38,7 +38,6 @@ function changeAnimeRating($array){
   $stmt = $mysql->prepare("UPDATE anime SET userRatings = "  . $array['value'] . " WHERE mal_id = " . $array['mal_id'] . ";");
   $stmt->execute();
   $mysql->close();
-  
   return 1;
 }
 
@@ -94,6 +93,8 @@ function fetchAnime($array){
   $result = $mysql->query($query);
   $anime = $result->fetch_row();
   $mysql->close();
+  $anime['reviews'] = showReviews($array);
+  //array_push($anime, $array['reviews']);
   return $anime;
 }
 
@@ -309,7 +310,7 @@ function showPosts ($array) {
   
     //create the display string
     $thread_name = stripslashes($title[0]);
-    $posts_query = "select post_id, post_content, date_format(post_time, '%b %e %Y at %r') as fmt_post_time, post_owner from posts where thread_id = '" . $array['thread_id'] . "' order by post_time desc;";
+    $posts_query = "select post_content, date_format(post_time, '%b %e %Y at %r') as fmt_post_time, post_owner from posts where thread_id = '" . $array['thread_id'] . "' order by post_time asc;";
 
     $posts_result = $mysql->query($posts_query); // get the mysqli result
 
@@ -318,7 +319,6 @@ function showPosts ($array) {
 
 
     foreach ($posts_result as $row) {
-        $post_id = $row['post_id'];
         $post_content = stripslashes($row['post_content']);
         $post_time = $row['fmt_post_time'];
         $post_owner = stripslashes($row['post_owner']);
@@ -339,12 +339,63 @@ function showPosts ($array) {
 }
 
 //todo: add review (same code as addPosts, just a different database)
-function addReview () {
+function addReview ($array) {
+   global $hostSQL, $userSQL, $passSQL, $dbSQL;
+   $mysql = new mysqli($hostSQL, $userSQL, $passSQL, $dbSQL);
+
+    if ($mysql -> connect_errno){
+        return "Could not connect to mysql: ". $mysql->connect_error;
+        exit();
+    }
+    $stmt = $mysql->prepare("insert into reviews (review_id, mal_id, review_content, review_time, review_owner) values (?, ?, ?, NOW(), ?)");
+    $id = '';
+    $stmt->bind_param("ssss", $id, $array['mal_id'], $array['review_content'], $array['username']);
+
+    if($stmt->execute()){
+         $mysql->close();
+         return fetchAnime($array);
+    }
+    else{
+        $mysql->close();
+        return $stmt->error;
+    }
 
 }
 
 //todo: list all reviews (same code as showPosts)
-function showReviews () {
+function showReviews ($array) {
+global $hostSQL, $userSQL, $passSQL, $dbSQL;
+  $mysql = new mysqli($hostSQL, $userSQL, $passSQL, $dbSQL);
+
+    if ($mysql -> connect_errno){
+        return "Could not connect to mysql: ". $mysql->connect_error;
+        exit();
+    }
+
+    $query = "select review_content, date_format(review_time, '%b %e %Y at %r') as fmt_review_time, review_owner from reviews where mal_id = '" . $array['mal_id'] . "' order by review_time desc;";
+
+    $result = $mysql->query($query); // get the mysqli result
+
+    $html = "<br><strong>Reviews</strong> <table width=100% cellpadding=3 cellspacing=1 border=1> 
+            <tr><th>AUTHOR</th><th>REVIEW</th></tr>";
+
+
+    foreach ($result as $row) {
+        $review_content = stripslashes($row['review_content']);
+        $review_time = $row['fmt_review_time'];
+        $review_owner = stripslashes($row['review_owner']);
+
+        //add to display
+        $html .= "
+        <tr>
+        <td width=35% valign=top>$review_owner<br>[$review_time]</td>
+        <td width=65% valign=top>$review_content<br><br>
+        </td>
+	</tr>";
+    }
+  $html .= "</table>";
+  $mysql->close();
+  return $html;
 
 }
 
@@ -428,6 +479,11 @@ function requestProcessor($array) {
     echo "Show all posts in threads" . PHP_EOL;
     return showPosts($array);
   }
+  if($array['type'] == 'addReview'){
+    echo "Fetching: $array[mal_id] and creating reviews" . PHP_EOL;
+    return addReview($array);
+  }
+
  }
 }
 

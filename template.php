@@ -23,22 +23,40 @@
   
 include('SQLFiles/SQLPublish.php');
 
-if(isset($_POST['upvote'])) {
-  unset($_POST['upvote']);
-  changeRating(1);
-}else if(isset($_POST['downvote'])) {
-  unset($_POST['downvote']);
-  changeRating(-1);
-}
+session_start();
 
+  if(isset($_SESSION ['username'])){
+        echo "<p> Logged in as: " . $_SESSION['username']. "</p>";
+        echo '<p><a href = "logout.php">Log Out </a></p>';
+  }
 
 if(isset($_GET['mal_id'])){
+
+  if (isset($_POST['add']) && isset($_POST['review_content']))
+  {
+      if(!isset($_SESSION['username'])){
+            echo "<script>alert('Please log in first!')</script>";
+      header("Refresh: .1; url=template.php?mal_id=$_GET[mal_id]");
+
+      }
+	    //add the review
+      else{
+      $anime= publisher(array(
+      'type' => 'addReview',
+      'mal_id' => $_POST['mal_id'],
+      'review_content'=> $_POST['review_content'],
+      'username' => $_SESSION['username']
+      ));
+      }
+  }	    
+  else {
   $anime = publisher(array(
     'type' =>  'fetchAnime',
     'mal_id' => $_GET['mal_id']
   ));
-
-  print_r($anime);
+  } 
+  //print_r($anime);
+  
   $mal_id = $anime[1];
   $img = $anime[3];
   $title = $anime[2]; 
@@ -46,23 +64,36 @@ if(isset($_GET['mal_id'])){
   $rating = $anime[4];
   $synopsis = $anime[7];
   $userRatings = $anime[8];
+  $reviews = $anime['reviews'];
+
   $crunchyRollTitle = $anime[2];
-  
+
   $crunchyRollTitle = str_replace(':',"", $crunchyRollTitle);
   $crunchyRollTitle = str_replace(' ',"-", $crunchyRollTitle);
   echo "<pre>" . $crunchyRollTitle . "</pre>"; 
   $crunchyRollLink = "https://www.crunchyroll.com/" . $crunchyRollTitle;
   echo "<pre>" . $crunchyRollLink . "</pre>"; 
-  
+}
+
+
+if(isset($_POST['upvote'])) {
+  unset($_POST['upvote']);
+  changeRating(1);
+}
+else if(isset($_POST['downvote'])) {
+  unset($_POST['downvote']);
+  changeRating(-1);
 }
 
 function changeRating($value) {
-  global $mal_id, $userRatings;
+//	global $mal_id,
+  global $userRatings;
   $userRatings += $value;
   publisher(array(
     'type' => 'changeRating',
     'value' => $userRatings,
-    'mal_id' => $mal_id
+    'mal_id' => $_GET['mal_id']
+
   ));
 }
 ?>
@@ -94,7 +125,7 @@ function changeRating($value) {
     <h2><?php echo $title ?></h2>
     <p><b>Synopsis</b>: <?php echo $synopsis ?>...</p>
     <p><b>Rating</b>: <?php echo $rating ?></p>
-    <p><b>Watch the trailer: <a href=<?php echo $trailer ?> target="_blank" rel="noopener noreferrer">Here</a></b> </p>
+    <p><b>Watch the trailer <a href=<?php echo $trailer ?> target="_blank" rel="noopener noreferrer">Here</a></b> </p>
     <p><b>Watch on Crunchyroll: <a href=<?php echo $crunchyRollLink ?> target="_blank" rel="noopener noreferrer">Here</a></b> </p>
     
 
@@ -117,9 +148,17 @@ function changeRating($value) {
         <input type="submit" name="downvote"
                 value="Vote Down" />
     </form>
-</div>
 
+<p><?php echo $reviews; ?></p>
+<form action="<?php echo "template.php?mal_id=$_GET[mal_id]"?>" method="post">
+   <p><strong>Post Your Review</strong></p>
 
+   <textarea name="review_content" rows=8 cols=40 wrap=virtual></textarea>
+
+   <input name="add" value="addreview" type="hidden"/>
+   <input name="mal_id" value = "<?php echo $_GET['mal_id'];?>" type="hidden"/>
+
+   <P><input type="submit" name="submit" value="Post"/></p>
 </div>
 
 </div>

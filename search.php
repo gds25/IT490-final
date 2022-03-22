@@ -25,15 +25,14 @@ require('session.php');
    <input id="animesearch" name="animesearch" type="text" align="right"/>
    <input type="submit" name = "submit" value="Search Again"/>
   
-  <label for="filter">Filter by:</label>
-  <select name="filter[]" id="filter">
-  <option value="ascending">Title Ascending</option>
-  <option value="descending">Title Descending</option>
-  <option value="rating">Show Rating</option>
-  <option value="genre">Show Genre</option>
-  </select>
- 
-</form>
+   <label for="filter">Filter by:</label>
+   <select name="filter[]" id="filter">
+   <option value="ascending">Title Ascending</option>
+   <option value="descending">Title Descending</option>
+   <option value="rating">Show Rating</option>
+   <option value="genre">Show Genre</option>  
+   </select> 
+ </form>
 
 <?php 
 include('SQLFiles/SQLPublish.php');
@@ -74,8 +73,8 @@ if($filter == 'rating'){
     echo "<br>";
   }
 }
-
 ?>
+
   <div id ="search">
   </div>
 </div>
