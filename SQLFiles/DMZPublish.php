@@ -13,6 +13,10 @@ require_once('rabbitMQLib.inc');
   $response = $client->send_request($argv[1]);
   
   //Establish Connection
+  if(isset($argv[2])){
+    print_r($response);
+    exit();
+  }
   $mysql = new mysqli('localhost', 'dran', 'pharmacy', 'animeDatabase');
   if ($mysql -> connect_errno){
       return "Could not connect to mysql: ". $mysql->connect_error;

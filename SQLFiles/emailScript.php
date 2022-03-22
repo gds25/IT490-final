@@ -1,12 +1,13 @@
 #!/usr/bin/php
 <?php
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\SMTP;
 
-require('./PHPMailer-master/PHPMailer-master/src/PHPMailer.php');
-require('./PHPMailer-master/PHPMailer-master/src/Exception.php');
-require('./PHPMailer-master/PHPMailer-master/src/SMTP.php');
+require('PHPMailer-master/PHPMailer-master/src/PHPMailer.php');
+require('PHPMailer-master/PHPMailer-master/src/Exception.php');
+require('PHPMailer-master/PHPMailer-master/src/SMTP.php');
 
 $servername = "127.0.0.1";
 $username = "dran";
@@ -22,8 +23,7 @@ if ($conn->connect_error) {
   }
   
 $sql = "SELECT email FROM Users";
-$result = $conn -> query($sql);
-$conn -> close();
+$result = $conn->query($sql);
 print_r($sql);
 
 
@@ -32,24 +32,26 @@ print_r($sql);
 
 $today = date('l');
 //basic get top anime query
-$data_json = file_get_contents("https://api.jikan.moe/v4/schedules?filter={$today}");
-$arr = json_decode($data_json, true);
+//$data_json = file_get_contents("https://api.jikan.moe/v4/schedules?filter={$today}");
+//$arr = json_decode($data_json, true);
 
-//exec("php DMZPublish.php https://api.jikan.moe/v4/schedules?filter={$today} email");
+$animes = exec('php DMZPublish.php https://api.jikan.moe/v4/schedules?filter=' . $today . ' email');
 
+$animes = json_decode($animes, true);
+$animes = json_encode($animes, true);
+$animes = json_decode($animes, true);
+$animeTitles = array();
+foreach($animes as $row){
+   foreach($animes['data'] as $anime){
+      array_push($animeTitles, $anime['title']);
+   }
+}
+print_r($animeTitles);
 
 
 $mail = new PHPMailer(true);
 
 $mail->IsSMTP(); // enable SMTP
-
-$mail->SMTPOptions = array(
-   'ssl' => array(
-       'verify_peer' => false,
-       'verify_peer_name' => false,
-       'allow_self_signed' => true
-   )
-);
 
 $mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
 $mail->SMTPAuth = true; // authentication enabled
@@ -64,12 +66,10 @@ $mail->Subject = "Your Daily Anime Schedule!";
 
 $bodyTemp = "<h1>Heres the schedule for today:</h1> <br/>";
 //populate message body
-foreach ($arr['data'] as $anime)
+foreach ($animeTitles as $title)
         {
 			// set up each anime's array variables
-			$img = $anime['images']['jpg']['image_url'];
-			$title = $anime['title']; 
-			
+			//$img = $anime['images']['jpg']['image_url']; 
 			
 			$bodyTemp = $bodyTemp . "<br />" . $title;
 			
@@ -80,8 +80,9 @@ foreach ($arr['data'] as $anime)
         }	
 $mail->Body = $bodyTemp;
 //add me there so i can make sure it works
-$mail->AddAddress("db488@njit.edu");
+//$mail->AddAddress("db488@njit.edu");
 //loop to add all email addresses in db
+
 
 while($row  = $result->fetch_array(MYSQLI_ASSOC))
     {
@@ -90,11 +91,10 @@ while($row  = $result->fetch_array(MYSQLI_ASSOC))
 
 
  if(!$mail->Send()) {
-    echo "Mailer Error: " . $mail->ErrorInfo . PHP_EOL;
+    echo "Mailer Error: " . $mail->ErrorInfo;
     exit();
  } else {
-    echo "Message has been sent" . PHP_EOL;
+    echo "Message has been sent";
     exit();
  }
- 
 ?>
