@@ -1,10 +1,6 @@
 <?php
     require('session.php');
     checkLogin();
-    $servername = "127.0.0.1";
-    $username = "root";
-    $password = "";
-    $dbname = "animedatabase";
 ?>
 <!DOCTYPE html>
 <html>
@@ -25,7 +21,7 @@
         </div>
 
 		<h1>Results</h1>
-		<h3>Your Top Recomended Genre(s) are:<br/></h3>
+		
         <?php
             
             $answer1 = $_POST['question-1-answers'];
@@ -327,36 +323,35 @@
 
             $maxValKeys = array_keys($results, $max);
             $secondMaxValKeys = array_keys($results, $secondMax);
-            $recomended = implode(", ", $maxValKeys);
-            $user = "test";//$_SESSION['username'];
+
             
-            $conn = mysqli_connect($servername, $username, $password, $dbname);
-            $stmt = $conn->prepare("UPDATE Users SET genreRecomended = ? WHERE username = ?");
-            $stmt->bind_param("ss", $recomended, $user);
-            // Check connection
-            if ($conn->connect_error) {
-              die("Connection failed: " . $conn->connect_error);
-              //error message for logger
-            }
 
-            $stmt->execute();
-            //to redirect to profile page
-            //header("Location: /profile.php",TRUE,303);
+
             
-            //print out the recomended genres
-            foreach ($maxValKeys as $key=>$value){
-                echo($value . "<br/>");
-            }
-            echo("<h3>Your Other Recomended Genre(s) are:<br/></h3>");
-            foreach ($secondMaxValKeys as $key=>$value){
-                echo($value . "<br/>");
-            }
-
-
-    
+            
+            
+            
         ?>
+        <p><strong>Your Top Genres: </strong><?php echo implode(", ", $maxValKeys); ?></p>
+        <p><strong>Your Second Top Genres: </strong><?php echo implode(", ", $secondMaxValKeys);?></p>
+        <br><p><strong>WE RECOMMEND: </strong></p><br>
+        <?php 
+        include('SQLFiles/SQLPublish.php');
+        $allGenres = array_merge($maxValKeys, $secondMaxValKeys); 
         
+        $anime =(publisher(array(
+            'type' => 'searchRandAnime',
+        )));
         
+        foreach($anime as $row){
+            foreach(json_decode($row['genre']) as $genre){
+                if(in_array($genre, $allGenres) ){
+                    echo "<a href=template.php?mal_id=" . $row['mal_id'] . ">" . $row['title'] . "</a><br>";
+                }
+            }
+        }
+
+        ?>
 	</div>
 
 </body>

@@ -14,6 +14,26 @@ $userSQL = 'dran';
 $passSQL = 'pharmacy';
 $dbSQL = 'animeDatabase';
 
+//For result.php to search for random animes
+function searchRandAnime($array){
+  global $hostSQL, $userSQL, $passSQL, $dbSQL;
+  $mysql = new mysqli($hostSQL, $userSQL, $passSQL, $dbSQL);
+  if ($mysql -> connect_errno){
+      return "Could not connect to mysql: ". $mysql->connect_error;
+      exit();
+  }
+  $query = "SELECT * FROM anime ORDER BY rand() LIMIT 30;";
+  $result = $mysql->query($query);
+  $mysql->close();
+  $anime = array();
+  foreach ($result as $row){
+    echo "Found: " . PHP_EOL;
+    print_r($row);
+    array_push($anime, $row);
+  }
+  return $anime;
+}
+
 //Retrieve information from
 function fetchUserInfo($array){
   global $hostSQL, $userSQL, $passSQL, $dbSQL;
@@ -401,6 +421,18 @@ global $hostSQL, $userSQL, $passSQL, $dbSQL;
 function requestProcessor($array) {
    if(array_key_exists('type', $array)){
 
+    //Retrieve random anime limit 30
+    if($array['type'] == 'searchRandAnime'){
+      echo "Retrieving random animes limit 30" . PHP_EOL;
+      print_r($array);
+      $anime = searchRandAnime($array);
+      if(!$anime){
+        return  "No anime found";
+      }else{
+        return $anime;
+      }
+    }
+
     //Fetch User info for profile.php
    if($array['type'] == 'fetchUserInfo'){
       echo "Retrieving User info for: " . PHP_EOL;
@@ -428,7 +460,7 @@ function requestProcessor($array) {
     echo "Searching for: " . PHP_EOL;
     print_r($array);
     exec('php DMZPublish.php https://api.jikan.moe/v4/anime?q=' . urlencode($array['title']));
-    sleep(2);
+    sleep(.5);
     $anime = searchAnime($array);
     if(!$anime){
       return  "No anime found";
