@@ -12,8 +12,8 @@ require_once('DMZPublish.php');
 
 //SQL Connection Parameters
 $hostSQL = 'localhost';
-$userSQL = 'gds25';
-$passSQL = 'Roseli1975';
+$userSQL = 'dran';
+$passSQL = 'pharmacy';
 $dbSQL = 'animeDatabase';
 
 //Retrieve information from
