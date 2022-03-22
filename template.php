@@ -31,8 +31,25 @@ session_start();
   }
 
 if(isset($_GET['mal_id'])){
-
-  if (isset($_POST['add']) && isset($_POST['review_content']))
+  if(isset($_POST['upvote'])) {
+      if(!isset($_SESSION['username'])){
+        echo "<script>alert('Please log in first!')</script>";
+        header("Refresh: .1; url=template.php?mal_id=$_GET[mal_id]");
+      }
+      unset($_POST['upvote']);
+      echo "up";
+    echo $_POST['userRatings'];
+      $anime = changeRating(1);
+  }
+  else if(isset($_POST['downvote'])) {
+      if(!isset($_SESSION['username'])){
+        echo "<script>alert('Please log in first!')</script>";
+        header("Refresh: .1; url=template.php?mal_id=$_GET[mal_id]");
+      }
+      unset($_POST['downvote']);
+      $anime = changeRating(-1);
+  }
+  else if (isset($_POST['add']) && isset($_POST['review_content']))
   {
       if(!isset($_SESSION['username'])){
             echo "<script>alert('Please log in first!')</script>";
@@ -50,10 +67,10 @@ if(isset($_GET['mal_id'])){
       }
   }	    
   else {
-  $anime = publisher(array(
-    'type' =>  'fetchAnime',
-    'mal_id' => $_GET['mal_id']
-  ));
+      $anime = publisher(array(
+      'type' =>  'fetchAnime',
+      'mal_id' => $_GET['mal_id']
+      ));
   } 
   //print_r($anime);
   
@@ -73,28 +90,19 @@ if(isset($_GET['mal_id'])){
   echo "<pre>" . $crunchyRollTitle . "</pre>"; 
   $crunchyRollLink = "https://www.crunchyroll.com/" . $crunchyRollTitle;
   echo "<pre>" . $crunchyRollLink . "</pre>"; 
-}
 
-
-if(isset($_POST['upvote'])) {
-  unset($_POST['upvote']);
-  changeRating(1);
-}
-else if(isset($_POST['downvote'])) {
-  unset($_POST['downvote']);
-  changeRating(-1);
-}
+}  
 
 function changeRating($value) {
-//	global $mal_id,
-  global $userRatings;
-  $userRatings += $value;
-  publisher(array(
+  //global $mal_id;
+	//global $userRatings;
+  $ratings = $_POST['userRatings'] + $value;
+  $anime = publisher(array(
     'type' => 'changeRating',
-    'value' => $userRatings,
-    'mal_id' => $_GET['mal_id']
-
+    'value' => $ratings,
+    'mal_id' => $_POST['mal_id']
   ));
+  return $anime;
 }
 ?>
 
@@ -147,7 +155,9 @@ function changeRating($value) {
           
         <input type="submit" name="downvote"
                 value="Vote Down" />
-    </form>
+        <input name="userRatings" value = "<?php echo $userRatings;?>" type="hidden"/>
+        <input name="mal_id" value = "<?php echo $_GET['mal_id'];?>" type="hidden"/> 
+   </form>
 
 <p><?php echo $reviews; ?></p>
 <form action="<?php echo "template.php?mal_id=$_GET[mal_id]"?>" method="post">
