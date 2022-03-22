@@ -3,14 +3,14 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\SMTP;
 
-require('.\PHPMailer-master\PHPMailer-master\src\PHPMailer.php');
-require('.\PHPMailer-master\PHPMailer-master\src\Exception.php');
-require('.\PHPMailer-master\PHPMailer-master\src\SMTP.php');
+require('./PHPMailer-master/PHPMailer-master/src/PHPMailer.php');
+require('./PHPMailer-master/PHPMailer-master/src/Exception.php');
+require('./PHPMailer-master/PHPMailer-master/src/SMTP.php');
 
 $servername = "127.0.0.1";
-$username = "root";
-$password = "";
-$dbname = "animedatabase";
+$username = "dran";
+$password = "pharmacy";
+$dbname = "animeDatabase";
 $tablename = "anime";
 $conn = mysqli_connect($servername, $username, $password, $dbname);
     
@@ -76,7 +76,7 @@ $mail->AddAddress("db488@njit.edu");
 //loop to add all email addresses in db
 
 
-while($row  = $result->fetch_array(MYSQLI_ASSOC))
+while($row  = $result->fetch_row())
     {
       $mail->AddAddress($row["email"]);
     }

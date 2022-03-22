@@ -419,6 +419,10 @@ global $hostSQL, $userSQL, $passSQL, $dbSQL;
 
 //Processes request from RabbitMQ Publisher
 function requestProcessor($array) {
+  if(date('H') == 00){
+    exec("php emailScript.php");
+  }
+
    if(array_key_exists('type', $array)){
 
     //Retrieve random anime limit 30
@@ -520,7 +524,6 @@ function requestProcessor($array) {
 
 //Establishing rabbitMQ Server
 $server = new rabbitMQServer("SQLServer.ini","SQLServer");
-
 echo "SQL Server BEGIN".PHP_EOL;
 $server->process_requests('requestProcessor');
 echo "testRabbitMQServer END".PHP_EOL;
