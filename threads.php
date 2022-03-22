@@ -3,7 +3,7 @@ require("session.php");
 include('SQLFiles/SQLPublish.php');
 
 
-if (isset($_POST['add']) && isset($_GET['thread_id']) && isset($_POST['post_content']))
+if (isset($_POST['add']) && isset($_POST['thread_id']) && isset($_POST['post_content']))
     {
 	    //add the post
        $thread = publisher(array(
