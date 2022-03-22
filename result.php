@@ -25,7 +25,7 @@
         </div>
 
 		<h1>Results</h1>
-		
+		<h3>Your Top Recomended Genre(s) are:<br/></h3>
         <?php
             
             $answer1 = $_POST['question-1-answers'];
@@ -328,7 +328,7 @@
             $maxValKeys = array_keys($results, $max);
             $secondMaxValKeys = array_keys($results, $secondMax);
             $recomended = implode(", ", $maxValKeys);
-            $user = $_SESSION['username'];
+            $user = "test";//$_SESSION['username'];
             
             $conn = mysqli_connect($servername, $username, $password, $dbname);
             $stmt = $conn->prepare("UPDATE Users SET genreRecomended = ? WHERE username = ?");
@@ -340,10 +340,22 @@
             }
 
             $stmt->execute();
+            //to redirect to profile page
+            //header("Location: /profile.php",TRUE,303);
             
-            header("Location: /profile.php",TRUE,303);
-            
+            //print out the recomended genres
+            foreach ($maxValKeys as $key=>$value){
+                echo($value . "<br/>");
+            }
+            echo("<h3>Your Other Recomended Genre(s) are:<br/></h3>");
+            foreach ($secondMaxValKeys as $key=>$value){
+                echo($value . "<br/>");
+            }
+
+
+    
         ?>
+        
         
 	</div>
 
