@@ -419,9 +419,6 @@ global $hostSQL, $userSQL, $passSQL, $dbSQL;
 
 //Processes request from RabbitMQ Publisher
 function requestProcessor($array) {
-  if(date('H') == 00){
-    exec("php emailScript.php");
-  }
 
    if(array_key_exists('type', $array)){
 

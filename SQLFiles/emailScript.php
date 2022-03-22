@@ -1,3 +1,4 @@
+#!/usr/bin/php
 <?php
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -20,8 +21,9 @@ if ($conn->connect_error) {
     //error message for logger
   }
   
-$sql = "SELECT email FROM users";
+$sql = "SELECT email FROM Users";
 $result = $conn -> query($sql);
+$conn -> close();
 print_r($sql);
 
 
@@ -31,17 +33,23 @@ print_r($sql);
 $today = date('l');
 //basic get top anime query
 $data_json = file_get_contents("https://api.jikan.moe/v4/schedules?filter={$today}");
-
-
 $arr = json_decode($data_json, true);
 
-
+//exec("php DMZPublish.php https://api.jikan.moe/v4/schedules?filter={$today} email");
 
 
 
 $mail = new PHPMailer(true);
 
 $mail->IsSMTP(); // enable SMTP
+
+$mail->SMTPOptions = array(
+   'ssl' => array(
+       'verify_peer' => false,
+       'verify_peer_name' => false,
+       'allow_self_signed' => true
+   )
+);
 
 $mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
 $mail->SMTPAuth = true; // authentication enabled
@@ -75,18 +83,18 @@ $mail->Body = $bodyTemp;
 $mail->AddAddress("db488@njit.edu");
 //loop to add all email addresses in db
 
-
-while($row  = $result->fetch_row())
+while($row  = $result->fetch_array(MYSQLI_ASSOC))
     {
       $mail->AddAddress($row["email"]);
     }
 
 
  if(!$mail->Send()) {
-    echo "Mailer Error: " . $mail->ErrorInfo;
+    echo "Mailer Error: " . $mail->ErrorInfo . PHP_EOL;
+    exit();
  } else {
-    echo "Message has been sent";
+    echo "Message has been sent" . PHP_EOL;
+    exit();
  }
-
  
 ?>
