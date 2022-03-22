@@ -17,9 +17,10 @@
     
    <label for="filter">Filter by:</label>
    <select name="filter[]" id="filter">
-    <option value="title">Title</option>
-    <option value="genre">Genre</option>
-    <option value="rating">Rating</option> 
+    <option value="ascending">Title Ascending</option>
+    <option value="descending">Title Descending</option>
+    <option value="rating">Show Rating</option>
+    <option value="genre">Show Genre</option>
    </select>
  </form>
 

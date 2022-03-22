@@ -23,14 +23,22 @@
   
 include('SQLFiles/SQLPublish.php');
 
+if(isset($_POST['upvote'])) {
+  unset($_POST['upvote']);
+  changeRating(1);
+}else if(isset($_POST['downvote'])) {
+  unset($_POST['downvote']);
+  changeRating(-1);
+}
+
+
 if(isset($_GET['mal_id'])){
   $anime = publisher(array(
     'type' =>  'fetchAnime',
     'mal_id' => $_GET['mal_id']
   ));
-  
+
   print_r($anime);
-  
   $mal_id = $anime[1];
   $img = $anime[3];
   $title = $anime[2]; 
@@ -38,15 +46,14 @@ if(isset($_GET['mal_id'])){
   $rating = $anime[4];
   $synopsis = $anime[7];
   $userRatings = $anime[8];
-}
-
-if(isset($_POST['upvote'])) {
-  unset($_POST['upvote']);
-  changeRating(1);
-}
-else if(isset($_POST['downvote'])) {
-  unset($_POST['downvote']);
-  changeRating(-1);
+  $crunchyRollTitle = $anime[2];
+  
+  $crunchyRollTitle = str_replace(':',"", $crunchyRollTitle);
+  $crunchyRollTitle = str_replace(' ',"-", $crunchyRollTitle);
+  echo "<pre>" . $crunchyRollTitle . "</pre>"; 
+  $crunchyRollLink = "https://www.crunchyroll.com/" . $crunchyRollTitle;
+  echo "<pre>" . $crunchyRollLink . "</pre>"; 
+  
 }
 
 function changeRating($value) {
@@ -87,8 +94,8 @@ function changeRating($value) {
     <h2><?php echo $title ?></h2>
     <p><b>Synopsis</b>: <?php echo $synopsis ?>...</p>
     <p><b>Rating</b>: <?php echo $rating ?></p>
-    <p><b>Watch the trailer <a href=<?php echo $trailer ?> target="_blank" rel="noopener noreferrer">Here</a></b> </p>
-
+    <p><b>Watch the trailer: <a href=<?php echo $trailer ?> target="_blank" rel="noopener noreferrer">Here</a></b> </p>
+    <p><b>Watch on Crunchyroll: <a href=<?php echo $crunchyRollLink ?> target="_blank" rel="noopener noreferrer">Here</a></b> </p>
     
 
 

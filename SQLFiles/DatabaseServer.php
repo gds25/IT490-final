@@ -38,6 +38,7 @@ function changeAnimeRating($array){
   $stmt = $mysql->prepare("UPDATE anime SET userRatings = "  . $array['value'] . " WHERE mal_id = " . $array['mal_id'] . ";");
   $stmt->execute();
   $mysql->close();
+  
   return 1;
 }
 
@@ -67,7 +68,7 @@ function searchAnime($array){
       return "Could not connect to mysql: ". $mysql->connect_error;
       exit();
   }
-  $query = "SELECT * FROM anime WHERE title LIKE '" . $array['title'] . "%' ORDER BY " . $array['filter'] . " LIMIT 50;";
+  $query = "SELECT * FROM anime WHERE title LIKE '" . $array['title'] . "%' LIMIT 50;";
   $result = $mysql->query($query);
   $mysql->close();
   $anime = array();
@@ -377,7 +378,7 @@ function requestProcessor($array) {
   if($array['type'] == 'searchAnime'){
     echo "Searching for: " . PHP_EOL;
     print_r($array);
-    DMZPublish('https://api.jikan.moe/v4/anime?q=' . urlencode($array['title']));
+    //DMZPublish('https://api.jikan.moe/v4/anime?q=' . urlencode($array['title']));
     $anime = searchAnime($array);
     if(!$anime){
       return  "No anime found";
