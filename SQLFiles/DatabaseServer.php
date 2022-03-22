@@ -8,8 +8,6 @@ require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
 
-require_once('DMZPublish.php');
-
 //SQL Connection Parameters
 $hostSQL = 'localhost';
 $userSQL = 'dran';
@@ -38,7 +36,7 @@ function changeAnimeRating($array){
   $stmt = $mysql->prepare("UPDATE anime SET userRatings = "  . $array['value'] . " WHERE mal_id = " . $array['mal_id'] . ";");
   $stmt->execute();
   $mysql->close();
-  return 1;
+  return fetchAnime($array);
 }
 
 //Retrieve topAnime for index.php
@@ -429,7 +427,8 @@ function requestProcessor($array) {
   if($array['type'] == 'searchAnime'){
     echo "Searching for: " . PHP_EOL;
     print_r($array);
-    //DMZPublish('https://api.jikan.moe/v4/anime?q=' . urlencode($array['title']));
+    exec('php DMZPublish.php https://api.jikan.moe/v4/anime?q=' . urlencode($array['title']));
+    sleep(2);
     $anime = searchAnime($array);
     if(!$anime){
       return  "No anime found";
