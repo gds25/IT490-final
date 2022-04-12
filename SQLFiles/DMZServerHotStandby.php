@@ -8,6 +8,17 @@ require_once('path.inc');
 require_once('get_host_info.inc');
 require_once('rabbitMQLib.inc');
 
+while(true){
+    $check = shell_exec('ps aux');
+    if(strpos($check, 'php DMZServer.php') == true){
+        echo "We see the DMZ Server is running" . PHP_EOL;
+        sleep(2);
+    }else{
+        echo "Starting Hot Standby" . PHP_EOL;
+        break;
+    }
+}
+
 //Request processor for calling API
 function requestProcessor($request)
 {
@@ -20,7 +31,7 @@ function requestProcessor($request)
 
   $today = date('l');
   if(strtolower($request) == strtolower("https://api.jikan.moe/v4/schedules?filter={$today}")){
-    echo "Getting new anime";
+    echo "here";
     return $data_json;
 
   }else{
@@ -72,4 +83,3 @@ $server->process_requests('requestProcessor');
 echo "DMZ END".PHP_EOL;
 exit();
 ?>
-
