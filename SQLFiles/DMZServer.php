@@ -1,4 +1,3 @@
-#!/usr/bin/php
 <?php
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -20,7 +19,7 @@ function requestProcessor($request)
 
   $today = date('l');
   if(strtolower($request) == strtolower("https://api.jikan.moe/v4/schedules?filter={$today}")){
-    echo "Getting new anime";
+    echo "here";
     return $data_json;
 
   }else{
