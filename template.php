@@ -17,6 +17,8 @@
   display: table;
   clear: both;
 }
+
+
 </style>
 
 <?php
@@ -27,7 +29,9 @@ session_start();
 
   if(isset($_SESSION ['username'])){
         echo "<p> Logged in as: " . $_SESSION['username']. "</p>";
-        echo '<p><a href = "logout.php">Log Out </a></p>';
+        echo '<p><a href = "logout.php">Log Out</a></p>';
+        
+        
   }
 
 if(isset($_GET['mal_id'])){
@@ -108,8 +112,8 @@ function changeRating($value) {
 
 <html>
 <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" /> 
         <meta charset=UTF-8" />
-        
         <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 
@@ -175,3 +179,4 @@ function changeRating($value) {
 
 </body>
 </html>
+

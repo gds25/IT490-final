@@ -5,15 +5,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-        <meta charset=UTF-8" />
-        
+        <meta name="viewport" content="width=device-width, initial-scale=1" />   
+        <meta charset="UTF-8" />
         <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 
 <body>
-<div id="page-wrap">
 
-<div id="topnav">
+
+
+
+<div class = "center" id="topnav">
         <?php include 'navbar.php';?>
 </div>
 
@@ -22,7 +24,7 @@
 
 <aside>
         <nav>
-        <h3>Top Anime</h3>
+        <h3>Top Anime :</h3>
 	<div>
   <?php
   include('SQLFiles/SQLPublish.php');
@@ -38,3 +40,4 @@
 
 </body>
 </html>
+
