@@ -8,6 +8,23 @@ user=bash
 password=1234
 database=deployment
 
+#get basic info file
+echo "Please enter the dev machine(FE, BE, DMZ): "
+read machine
+#echo "Where did it install?(FE, BE, DMZ)?: $location"
+echo "Please Enter the config File Name: "
+read configFile
+#="frontEndFiles.config"
+if [ $machine == "FE" ]; then
+    path="~/Desktop/IT490"
+else
+    if [ $machine == "BE" ]; then
+        path="~/Desktop/IT490"
+    else
+        #is DMZ
+        path="~/Desktop/IT490"
+    fi
+fi
 #TODO:
 #   Need to be able to input the package name(maybe like 3 packages/machine?)
 #   Differentiate between packages, and different machines(FE, BE, DMZ)(Only the three in QA really)
@@ -19,22 +36,45 @@ do
     mkdir "v$version"
     cd v$version
     
+
     
     #get from dev
-    sshpass -v -p "test" scp test@172.28.125.110:~/Desktop/SQLFiles.zip ~/deployment/v$version/SQLFiles.zip 
+    #sshpass -v -p "test" scp test@172.28.125.110:~/Desktop/SQLFiles.zip ~/deployment/v$version/SQLFiles.zip 
+
+    #copy config file into folder
+    sshpass -v -p "test" scp test@172.28.125.110:$path/frontEndFiles.config ~/deployment/v$version/$configFile 
+    #read file into array
+    IFS=$'\n' read -d '' -r -a lines < frontEndFiles.config
+    #get each file outlined in config
+    pkgName=${lines[2]}
+    installLoc=${lines[4]}
+    length=${#lines[@]}
+    for ((i=6; i<${length}; i++));
+        do
+            echo copying ${lines[i]} from dev...
+            sshpass -v -p "test" scp test@172.28.125.110:$path//${lines[i]} ~/deployment/v$version/${lines[i]} 
+        done
+
+
     #zip files
-    #zip -r SQLFiles.zip ~/deployment/v$version/SQLFiles/
+    zip -r -j $pkgName ~/deployment/v$version/* -x "*.config"
+    
     #remove files from qa
-    ssh testqa@172.28.231.181 "rm -r ~/DeploymentTestFolder/*"
+    for ((i=6; i<${length}; i++));
+        do
+            echo deleting ${lines[i]} from QA...
+            ssh testqa@172.28.231.181 "rm -r ~/DeploymentTestFolder/${lines[i]}"
+        done
+    
     #send to QA(testqa)
-    
-    sshpass -v -p "test" scp ~/deployment/v$version/SQLFiles.zip testqa@172.28.231.181:~/DeploymentTestFolder/
-    
-    ssh testqa@172.28.231.181 "unzip DeploymentTestFolder/SQLFiles.zip -d ~/DeploymentTestFolder/"
+    echo sending $pkgName to QA...
+    sshpass -v -p "test" scp ~/deployment/v$version/$pkgName.zip testqa@172.28.231.181:$installLoc
+    ssh testqa@172.28.231.181 "unzip $installLoc/$pkgName.zip -d $installLoc"
+    ssh testqa@172.28.231.181 "rm -r $installLoc/$pkgName.zip"
     echo Pushed Version: $version 
     #mysql update table
 
-    mysql --user="$user" --password="$password" --database="$database" --execute="INSERT INTO versionHistory (version, location, passed) VALUES ($version, \"backend\", NULL);"
+    mysql --user="$user" --password="$password" --database="$database" --execute="INSERT INTO versionHistory (version, pkgName, passed) VALUES ($version, \"$pkgName\", NULL);"
     
     #restart any services that are running on that machine 
 
@@ -51,8 +91,8 @@ do
         #echo Database Server restarted
 
         #DMZ: DMZServer.php
-        echo 'test' | ssh -t -t testqa@172.28.231.181 "sudo systemctl restart DMZService.service"
-        echo "DMZ Server restarted :)"
+        #echo 'test' | ssh -t -t testqa@172.28.231.181 "sudo systemctl restart DMZService.service"
+        #echo "DMZ Server restarted :)"
         
     break 
     else
