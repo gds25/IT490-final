@@ -20,9 +20,14 @@ if [ $passFail == "p" ]; then
     #TODO: Push to prod
 else
     echo alright, updating database to FAILED...
+    #get package name of last passed
+    pkg=$(mysql --user="$user" --password="$password" --database="$database" --execute="SELECT pkgName FROM versionHistory WHERE version = $version;")
+    temppkg=( $pkg )
+    pgkName="${temppkg[1]}"
+
     mysql --user="$user" --password="$password" --database="$database" --execute="UPDATE versionHistory SET passed = False WHERE version = $version;"
     echo "updated :("
-    newVersion=$(mysql --user="$user" --password="$password" --database="$database" --execute="SELECT version FROM versionHistory WHERE version = (SELECT MAX(version) FROM versionHistory WHERE passed = true);")
+    newVersion=$(mysql --user="$user" --password="$password" --database="$database" --execute="SELECT version FROM versionHistory WHERE version = (SELECT MAX(version) FROM versionHistory WHERE passed = true and pkgName = $pkgName);")
     
     vars=( $newVersion )
     temp="${vars[1]}"
@@ -30,16 +35,16 @@ else
     echo "going to roll back to the last passed version($temp)..."
 
     #remove files from qa
-    ssh testqa@172.28.231.181 "rm -r ~/DeploymentTestFolder/*"
+    #ssh testqa@172.28.231.181 "rm -r ~/DeploymentTestFolder/*"
     #send to QA(testqa)
     
-    sshpass -v -p "test" scp ~/deployment/v$temp/SQLFiles.zip testqa@172.28.231.181:~/DeploymentTestFolder/
+    #sshpass -v -p "test" scp ~/deployment/v$temp/SQLFiles.zip testqa@172.28.231.181:~/DeploymentTestFolder/
     
-    ssh testqa@172.28.231.181 "unzip DeploymentTestFolder/SQLFiles.zip -d ~/DeploymentTestFolder/"
-    echo Pushed Previous Version: $temp 
+    #ssh testqa@172.28.231.181 "unzip DeploymentTestFolder/SQLFiles.zip -d ~/DeploymentTestFolder/"
+    #echo Pushed Previous Version: $temp 
 
     #DMZ: DMZServer.php
-    echo 'test' | ssh -t -t testqa@172.28.231.181 "sudo systemctl restart DMZService.service"
-    echo "DMZ Server restarted :)"
+    #echo 'test' | ssh -t -t testqa@172.28.231.181 "sudo systemctl restart DMZService.service"
+    #echo "DMZ Server restarted :)"
 
 fi

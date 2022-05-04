@@ -44,12 +44,13 @@ do
     #copy config file into folder
     sshpass -v -p "test" scp test@172.28.125.110:$path/frontEndFiles.config ~/deployment/v$version/$configFile 
     #read file into array
-    IFS=$'\n' read -d '' -r -a lines < frontEndFiles.config
+    IFS=$'\n' read -d '' -r -a lines < $configFile
     #get each file outlined in config
     pkgName=${lines[2]}
     installLoc=${lines[4]}
+    services=${lines[6]}
     length=${#lines[@]}
-    for ((i=6; i<${length}; i++));
+    for ((i=8; i<${length}; i++));
         do
             echo copying ${lines[i]} from dev...
             sshpass -v -p "test" scp test@172.28.125.110:$path//${lines[i]} ~/deployment/v$version/${lines[i]} 
@@ -76,23 +77,27 @@ do
 
     mysql --user="$user" --password="$password" --database="$database" --execute="INSERT INTO versionHistory (version, pkgName, passed) VALUES ($version, \"$pkgName\", NULL);"
     
-    #restart any services that are running on that machine 
+    #restart any services based on config 
 
-        #FE: apache (Working)
-        #echo 'test' | ssh -t -t testqa@172.28.231.181 "sudo systemctl restart apache2"
-        #echo apache restarted
+    if [ $services == "apache" ]; then
+        #FE: apache 
+        echo 'test' | ssh -t -t testqa@172.28.231.181 "sudo systemctl restart apache2"
+        echo apache restarted
+    elif [ $services == "databaseServer" ]; then
+        #BE: DBServer.php
+        echo 'test' | ssh -t -t testqa@172.28.231.181 "sudo systemctl restart DatabaseService.service"
+        echo "Database Server restarted :)"
+        echo Database Server restarted
+    elif [ $services == "databaseServer" ]; then
+        #BE: Mysql
+        echo 'test' | ssh -t -t testqa@172.28.231.181 "sudo systemctl restart mysql"
+        echo mysql restarted
+    elif [ $services == "DMZServer" ]; then
+        DMZ: DMZServer.php
+        echo 'test' | ssh -t -t testqa@172.28.231.181 "sudo systemctl restart DMZService.service"
+        echo "DMZ Server restarted :)"
+    fi
         
-        #manage php scripts through systemd
-        #manually pass/fail each version 
-        #
-        #BE: Mysql, DBServer.php
-        #echo 'test' | ssh -t -t testqa@172.28.231.181 "sudo pkill -9 php"
-        #echo 'test' | ssh -t -t testqa@172.28.231.181 "php ~/DeploymentTestFolder/DatabaseServer.php" &
-        #echo Database Server restarted
-
-        #DMZ: DMZServer.php
-        #echo 'test' | ssh -t -t testqa@172.28.231.181 "sudo systemctl restart DMZService.service"
-        #echo "DMZ Server restarted :)"
         
     break 
     else
