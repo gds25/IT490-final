@@ -8,18 +8,17 @@
  <body>
     
 <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta charset=UTF-8" />
-        
         <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 
 <body>
-<div id="page-wrap">
+
 
 <div id="topnav">
         <?php include 'navbar.php';?>
 </div>
-
 
  <h1 align="center">Profile</h1>
 </div>
@@ -37,6 +36,11 @@
 
 
 ?>     
+<br>
+<h2 align = "left">
+    
+    Favorite Titles: 
+</h2>
 </div>
  </body>
  </html>
