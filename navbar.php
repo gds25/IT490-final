@@ -13,6 +13,7 @@
   <ul class = "container">
   <a class="active" href="/">Home</a>
   <a href="profile.php">Profile</a>
+  <a href="friends.php">Friends</a>
   <a href="forums.php">Forums</a>
   <a href="quiz.php">Quiz</a>
   <a href="login.php" align="right">Sign in</a>
@@ -51,5 +52,4 @@
 
 </html>
 </body>
-
 
