@@ -15,6 +15,7 @@ read machine
 echo "Please Enter the config File Name: "
 read configFile
 #="frontEndFiles.config"
+#set the path for where everyone keeps their files
 if [ $machine == "FE" ]; then
     path="~/Desktop/IT490"
 else
@@ -42,7 +43,7 @@ do
     #sshpass -v -p "test" scp test@172.28.125.110:~/Desktop/SQLFiles.zip ~/deployment/v$version/SQLFiles.zip 
 
     #copy config file into folder
-    sshpass -v -p "test" scp test@172.28.125.110:$path/frontEndFiles.config ~/deployment/v$version/$configFile 
+    sshpass -v -p "test" scp test@172.28.125.110:$path/$configFile ~/deployment/v$version/$configFile 
     #read file into array
     IFS=$'\n' read -d '' -r -a lines < $configFile
     #get each file outlined in config
@@ -61,7 +62,7 @@ do
     zip -r -j $pkgName ~/deployment/v$version/* -x "*.config"
     
     #remove files from qa
-    for ((i=6; i<${length}; i++));
+    for ((i=8; i<${length}; i++));
         do
             echo deleting ${lines[i]} from QA...
             ssh testqa@172.28.231.181 "rm -r ~/DeploymentTestFolder/${lines[i]}"
