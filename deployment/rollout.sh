@@ -17,28 +17,25 @@ read configFile
 #="frontEndFiles.config"
 #set the path for where everyone keeps their files
 if [ $machine == "FE" ]; then
-    path="~/Desktop/IT490"
-    devMachineName="test"
-    devIP="172.28.125.110"
-    devPass="test"
+    path="/var/www/html/2gb/public_html"
+    devMachineName="gds"
+    devIP="172.27.35.201"
+    devPass="R0seli197$"
 else
     if [ $machine == "BE" ]; then
-        path="~/Desktop/IT490"
-        devMachineName="test"
-        devIP="172.28.125.110"
-        devPass="test"
+        path="/var/www/html"
+        devMachineName="dran"
+        devIP="172.27.63.249"
+        devPass="pharmacy"
     else
         #is DMZ
-        path="~/Desktop/IT490"
-        devMachineName="test"
+        path="/var/www/html"
+        devMachineName="bsingh"
         devIP="172.28.125.110"
-        devPass="test"
+        devPass="05072000"
     fi
 fi
-#TODO:
-#   Need to be able to input the package name(maybe like 3 packages/machine?)
-#   Differentiate between packages, and different machines(FE, BE, DMZ)(Only the three in QA really)
-#   
+
 
 while :
 do
@@ -46,11 +43,6 @@ do
     mkdir "v$version"
     cd v$version
     
-
-    
-    #get from dev
-    #sshpass -v -p "test" scp test@172.28.125.110:~/Desktop/SQLFiles.zip ~/deployment/v$version/SQLFiles.zip 
-
     #copy config file into folder
     sshpass -v -p $devPass scp $devMachineName@$devIP:$path/$configFile ~/deployment/v$version/$configFile 
     #read file into array
@@ -73,22 +65,22 @@ do
 
     #set QA Machine paths and IP
     if [ $qaMachine == "FE" ]; then
-        QAMachineName="testqa"
-        QAIP="172.28.231.181"
-        QAPass='test'
+        QAMachineName="gds25"
+        QAIP="172.27.249.118"
+        QAPass='R0seli197$'
 
         #remove files from qa
         for ((i=9; i<${length}; i++));
             do
                 echo deleting ${lines[i]} from QA...
-                ssh testqa@172.28.231.181 "rm -r $installLoc/${lines[i]}"
+                ssh gds25@172.27.35.201 "rm -r $installLoc/${lines[i]}"
             done
         
         #send to QA(testqa)
         echo sending $pkgName to QA...
-        sshpass -v -p 'test' scp ~/deployment/v$version/$pkgName.zip testqa@172.28.231.181:$installLoc
-        ssh testqa@172.28.231.181 "unzip $installLoc/$pkgName.zip -d $installLoc"
-        ssh testqa@172.28.231.181 "rm -r $installLoc/$pkgName.zip"
+        sshpass -v -p 'R0seli197$' scp ~/deployment/v$version/$pkgName.zip gds25@172.27.249.118:$installLoc
+        ssh gds25@172.27.249.118 "unzip $installLoc/$pkgName.zip -d $installLoc"
+        ssh gds25@172.27.249.118 "rm -r $installLoc/$pkgName.zip"
         echo Pushed Version: $version 
         #mysql update table
 
@@ -98,41 +90,41 @@ do
 
         if [ $services == "apache" ]; then
             #FE: apache 
-            echo 'test' | ssh -t -t testqa@172.28.231.181 "sudo systemctl restart apache2"
+            echo 'R0seli197$' | ssh -t -t gds25@172.27.249.118 "sudo systemctl restart apache2"
             echo apache restarted
         elif [ $services == "databaseServer" ]; then
             #BE: DBServer.php
-            echo 'test' | ssh -t -t testqa@172.28.231.181 "sudo systemctl restart DatabaseService.service"
+            echo 'R0seli197$' | ssh -t -t gds25@172.27.249.118 "sudo systemctl restart DatabaseService.service"
             echo "Database Server restarted :)"
             echo Database Server restarted
         elif [ $services == "databaseServer" ]; then
             #BE: Mysql
-            echo 'test' | ssh -t -t testqa@172.28.231.181 "sudo systemctl restart mysql"
+            echo 'pharmacy' | ssh -t -t gds25@172.27.249.118 "sudo systemctl restart mysql"
             echo mysql restarted
         elif [ $services == "DMZServer" ]; then
             DMZ: DMZServer.php
-            echo 'test' | ssh -t -t testqa@172.28.231.181 "sudo systemctl restart DMZService.service"
+            echo 'R0seli197$' | ssh -t -t gds25@172.27.249.118 "sudo systemctl restart DMZService.service"
             echo "DMZ Server restarted :)"
         fi
 
 else
     if [ $qaMachine == "BE" ]; then
-        QAMachineName="testqa"
-        QAIP="172.28.231.181"
-        QAPass='test'
+        QAMachineName="dran"
+        QAIP="172.27.34.208"
+        QAPass='pharmacy'
 
         #remove files from qa
         for ((i=9; i<${length}; i++));
             do
                 echo deleting ${lines[i]} from QA...
-                ssh testqa@172.28.231.181 "rm -r $installLoc/${lines[i]}"
+                ssh dran@172.28.231.181 "rm -r $installLoc/${lines[i]}"
             done
         
         #send to QA(testqa)
         echo sending $pkgName to QA...
-        sshpass -v -p $QAPass scp ~/deployment/v$version/$pkgName.zip testqa@172.28.231.181:$installLoc
-        ssh testqa@172.28.231.181 "unzip $installLoc/$pkgName.zip -d $installLoc"
-        ssh testqa@172.28.231.181 "rm -r $installLoc/$pkgName.zip"
+        sshpass -v -p 'pharmacy' scp ~/deployment/v$version/$pkgName.zip testqa@172.27.34.208:$installLoc
+        ssh dran@172.27.34.208 "unzip $installLoc/$pkgName.zip -d $installLoc"
+        ssh dran@172.27.34.208 "rm -r $installLoc/$pkgName.zip"
         echo Pushed Version: $version 
         #mysql update table
 
@@ -142,40 +134,40 @@ else
 
         if [ $services == "apache" ]; then
             #FE: apache 
-            echo 'test' | ssh -t -t testqa@172.28.231.181 "sudo systemctl restart apache2"
+            echo 'pharmacy' | ssh -t -t dran@172.27.34.208 "sudo systemctl restart apache2"
             echo apache restarted
         elif [ $services == "databaseServer" ]; then
             #BE: DBServer.php
-            echo 'test' | ssh -t -t testqa@172.28.231.181 "sudo systemctl restart DatabaseService.service"
+            echo 'pharmacy' | ssh -t -t dran@172.27.34.208 "sudo systemctl restart DatabaseService.service"
             echo "Database Server restarted :)"
             echo Database Server restarted
         elif [ $services == "databaseServer" ]; then
             #BE: Mysql
-            echo 'test' | ssh -t -t testqa@172.28.231.181 "sudo systemctl restart mysql"
+            echo 'pharmacy' | ssh -t -t dran@172.27.34.208 "sudo systemctl restart mysql"
             echo mysql restarted
         elif [ $services == "DMZServer" ]; then
             DMZ: DMZServer.php
-            echo 'test' | ssh -t -t testqa@172.28.231.181 "sudo systemctl restart DMZService.service"
+            echo 'pharmacy' | ssh -t -t dran@172.27.34.208 "sudo systemctl restart DMZService.service"
             echo "DMZ Server restarted :)"
         fi
     else
         #is DMZ
-        QAMachineName="testqa"
-        QAIP="172.28.231.181"
-        QAPass='test'
+        QAMachineName="bsingh"
+        QAIP="172.27.118.99"
+        QAPass='05072000'
 
         #remove files from qa
         for ((i=9; i<${length}; i++));
             do
                 echo deleting ${lines[i]} from QA...
-                ssh testqa@172.28.231.181 "rm -r $installLoc/${lines[i]}"
+                ssh bsingh@172.27.118.99 "rm -r $installLoc/${lines[i]}"
             done
         
         #send to QA(testqa)
         echo sending $pkgName to QA...
-        sshpass -v -p $QAPass scp ~/deployment/v$version/$pkgName.zip testqa@172.28.231.181:$installLoc
-        ssh testqa@172.28.231.181 "unzip $installLoc/$pkgName.zip -d $installLoc"
-        ssh testqa@172.28.231.181 "rm -r $installLoc/$pkgName.zip"
+        sshpass -v -p '05072000' scp ~/deployment/v$version/$pkgName.zip bsingh@172.27.118.99:$installLoc
+        ssh bsingh@172.27.118.99 "unzip $installLoc/$pkgName.zip -d $installLoc"
+        ssh bsingh@172.27.118.99 "rm -r $installLoc/$pkgName.zip"
         echo Pushed Version: $version 
         #mysql update table
 
@@ -185,20 +177,20 @@ else
 
         if [ $services == "apache" ]; then
             #FE: apache 
-            echo 'test' | ssh -t -t testqa@172.28.231.181 "sudo systemctl restart apache2"
+            echo '05072000' | ssh -t -t bsingh@172.27.118.99 "sudo systemctl restart apache2"
             echo apache restarted
         elif [ $services == "databaseServer" ]; then
             #BE: DBServer.php
-            echo 'test' | ssh -t -t testqa@172.28.231.181 "sudo systemctl restart DatabaseService.service"
+            echo '05072000' | ssh -t -t bsingh@172.27.118.99 "sudo systemctl restart DatabaseService.service"
             echo "Database Server restarted :)"
             echo Database Server restarted
         elif [ $services == "databaseServer" ]; then
             #BE: Mysql
-            echo 'test' | ssh -t -t testqa@172.28.231.181 "sudo systemctl restart mysql"
+            echo '05072000' | ssh -t -t bsingh@172.27.118.99 "sudo systemctl restart mysql"
             echo mysql restarted
         elif [ $services == "DMZServer" ]; then
             DMZ: DMZServer.php
-            echo 'test' | ssh -t -t testqa@172.28.231.181 "sudo systemctl restart DMZService.service"
+            echo '05072000' | ssh -t -t bsingh@172.27.118.99 "sudo systemctl restart DMZService.service"
             echo "DMZ Server restarted :)"
         fi
     fi
