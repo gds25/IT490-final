@@ -72,5 +72,26 @@ create table if not exists reviews (
     Primary Key(review_id)
     );
 
+create table if not exists friends (
+    ID int not null unique auto_increment,
+    username varchar(255) not null,
+    friend varchar(255) not null,
+    primary key(ID)
+);
+
+create table if not exists friends (
+    ID int not null unique auto_increment,
+    username varchar(255) not null,
+    anime varchar(255) not null,
+    primary key(ID)
+);
+
+create table if not exists favorites(
+    ID int not null unique auto_increment,
+    username varchar(255) not null,
+    mal_id varchar(255) not null unique,
+    primary key(ID)
+);
+
 
 

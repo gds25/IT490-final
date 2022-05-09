@@ -1,9 +1,7 @@
 <?php
-
 require("session.php");
-
+checkLogin();
 include('SQLFiles/SQLPublish.php');
-
 ?>
 
 <!DOCTYPE html>
@@ -46,16 +44,39 @@ include('SQLFiles/SQLPublish.php');
 </div>
 
 <body>
-<p align = "center";>Add Friend:<br>
-  <input id="friend_user" size="7" type="text" /><br>
-  <form>
-   <p align = "center";><input type="submit" name="submit" value="submit"/></p>
-</form>
+<div align = "center">
+<p>Add Friend:<br>
+  <form form method = post>
+  <input name="friend" size="7" type="text" />
+  <input type="submit" name="submit" value="submit"/></p>
+  </form><br>
+<p>
   
   <br><br><br>
 
-   <p align = "center"><strong>Friend's List: </strong></p>
-   
+   <p><strong>Friend's List: </strong></p>
+   <?php
+    if(!empty($_POST['friend'])){
+      $friends = publisher(array(
+        'type' => 'addFriend',
+        'username' => $_SESSION['username'],
+        'friend' => $_POST['friend']
+      ));
+      foreach ($friends as $row){
+        echo $row['friend'] . "<br>";
+      }
+    }else{
+      $friends = publisher(array(
+        'type' => 'getFriends',
+        'username' => $_SESSION['username']
+      ));
+      
+      foreach ($friends as $row){
+        echo $row['friend'] . "<br>";
+      }
+    }
+   ?>
+</div> 
   
 
 

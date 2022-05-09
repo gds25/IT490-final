@@ -10,6 +10,7 @@
 	<link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 
+<div align = "center">
 <body>
 
 	<div id="page-wrap">
@@ -19,6 +20,7 @@
 
 		<h1>What is Your Anime Genre</h1>
 		
+        <div align = "left">
 		<form action="result.php" method="post" id="quiz">
 		
             <ol>
@@ -336,10 +338,11 @@
             <input type="submit" value="Submit" class="submitbtn" />
 		
 		</form>
+    </div>
 	
 	</div>
 
 
 </body>
-
+</div>
 </html>

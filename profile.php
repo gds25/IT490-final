@@ -29,18 +29,19 @@
         'type' =>'fetchUserInfo',
         'username' => $_SESSION['username']
     ));
-    echo "<strong>Hello: </strong><i>" . $userInfo[1] . "</i> <strong>!</strong><br><br>";
-    echo "<strong>First Name: </strong>" . $userInfo[3] . "<br>";
-    echo "<strong>Last Name: </strong>" . $userInfo[4] . "<br>";
-    echo "<strong>Email: </strong>" . $userInfo[5] . "<br>";
-
+    echo "<strong>Hello: </strong><i>" . $userInfo['profile'][1] . "</i> <strong>!</strong><br><br>";
+    echo "<strong>First Name: </strong>" . $userInfo['profile'][3] . "<br>";
+    echo "<strong>Last Name: </strong>" . $userInfo['profile'][4] . "<br>";
+    echo "<strong>Email: </strong>" . $userInfo['profile'][5] . "<br>";
 
 ?>     
 <br>
-<h2 align = "left">
-    
-    Favorite Titles: 
-</h2>
+<h2 align = "center"> Favorite Titles: </h2>
+<?php
+foreach ($userInfo['favorites'] as $row){
+    echo $row . "<br>";
+}
+?>
 </div>
  </body>
  </html>

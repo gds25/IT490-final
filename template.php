@@ -29,9 +29,7 @@ session_start();
 
   if(isset($_SESSION ['username'])){
         echo "<p> Logged in as: " . $_SESSION['username']. "</p>";
-        echo '<p><a href = "logout.php">Log Out</a></p>';
-        
-        
+        echo '<p><a href = "logout.php">Log Out</a></p>';             
   }
 
 if(isset($_GET['mal_id'])){
@@ -69,8 +67,19 @@ if(isset($_GET['mal_id'])){
       'username' => $_SESSION['username']
       ));
       }
-  }	    
-  else {
+  }
+  else if (isset($_POST['addFavorite'])){
+    if(!isset($_SESSION['username'])){
+      echo "<script>alert('Please log in first!')</script>";
+      header("Refresh: .1; url=template.php?mal_id=$_GET[mal_id]");
+    }
+    unset($_POST['favoriteAnime']);
+    $anime = publisher(array(
+      'type' => 'favoriteAnime',
+      'username' => $_SESSION['username'],
+      'mal_id' => $_GET['mal_id']
+    ));
+  } else {
       $anime = publisher(array(
       'type' =>  'fetchAnime',
       'mal_id' => $_GET['mal_id']
@@ -139,6 +148,7 @@ function changeRating($value) {
     <p><b>Rating</b>: <?php echo $rating ?></p>
     <p><b>Watch the trailer <a href=<?php echo $trailer ?> target="_blank" rel="noopener noreferrer">Here</a></b> </p>
     <p><b>Watch on Crunchyroll: <a href=<?php echo $crunchyRollLink ?> target="_blank" rel="noopener noreferrer">Here</a></b> </p>
+    <p><b><form method = 'post'><input type = 'submit' name = 'addFavorite' value = 'Add to favorites'/></form></b> </p>
     
 
 

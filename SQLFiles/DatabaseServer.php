@@ -14,6 +14,82 @@ $userSQL = 'dran';
 $passSQL = 'pharmacy';
 $dbSQL = 'animeDatabase';
 
+//Adding favorite anime to favorites table
+function addFavoriteAnime($array){
+
+  global $hostSQL, $userSQL, $passSQL, $dbSQL;
+  //Establishing connection
+  $mysql = new mysqli($hostSQL, $userSQL, $passSQL, $dbSQL);
+    if ($mysql -> connect_errno){
+        return "Could not connect to mysql: ". $mysql->connect_error;
+        exit();
+    }
+    
+     //Preparing statement and binding parameters
+    $stmt = $mysql->prepare("INSERT INTO favorites (username, mal_id) VALUES (?,?)");
+    $stmt->bind_param('ss', $array['username'], $array['mal_id']);
+    //If executed correctly, return 1. Else, return the statement error
+    if($stmt->execute()){
+      $mysql->close();
+      return 1;
+    }else{
+      $error = $stmt->error;
+      $mysql->close();
+      return $error;
+    }
+}
+
+//Getting friends list based of username
+function getFriends($array){
+  global $hostSQL, $userSQL, $passSQL, $dbSQL;
+  $mysql = new mysqli($hostSQL, $userSQL, $passSQL, $dbSQL);
+  if ($mysql -> connect_errno){
+      return "Could not connect to mysql: ". $mysql->connect_error;
+      exit();
+  }
+  $query = "SELECT * FROM friends where username = '" . $array['username'] . "';";
+  $result = $mysql->query($query);
+  $mysql->close();
+  $friends = array();
+  foreach ($result as $row){
+    echo "Found: " . PHP_EOL;
+    print_r($row);
+    array_push($friends, $row);
+  }
+  return $friends;
+}
+
+//Adding friend to friend table
+function addFriend($array){
+
+  global $hostSQL, $userSQL, $passSQL, $dbSQL;
+  //Establishing connection
+  $mysql = new mysqli($hostSQL, $userSQL, $passSQL, $dbSQL);
+    if ($mysql -> connect_errno){
+        return "Could not connect to mysql: ". $mysql->connect_error;
+        exit();
+    }
+  
+  $query = "SELECT * from Users where username = '" . $array['friend'] . "' and username != '" . $array['username'] . "';"; 
+  $result = $mysql->query($query);
+  if(mysqli_num_rows($result) == 1){
+    //Preparing statement and binding parameters
+    $stmt = $mysql->prepare("INSERT INTO friends (username, friend) VALUES (?,?)");
+    $stmt->bind_param('ss', $array['username'], $array['friend']);
+    //If executed correctly, return 1. Else, return the statement error
+    if($stmt->execute()){
+      $mysql->close();
+      return 1;
+    }else{
+      $error = $stmt->error;
+      $mysql->close();
+      return $error;
+    }
+  }
+  $mysql->close();
+  return;
+}
+
 //For result.php to search for random animes
 function searchRandAnime($array){
   global $hostSQL, $userSQL, $passSQL, $dbSQL;
@@ -44,9 +120,23 @@ function fetchUserInfo($array){
   }
   $query = "SELECT * FROM Users WHERE username = '" . $array['username'] . "';";
   $result = $mysql->query($query);
-  $userInfo = $result->fetch_row();
+  $info = array(
+    'profile' => $result->fetch_row()
+  );
+  $query = "SELECT mal_id from favorites where username = '" . $array['username'] . "';";
+  $result = $mysql->query($query);
+  $favoriteAnimes = array();
+  foreach($result as $row){
+    $query2 = "SELECT title from anime where mal_id =  " . $row['mal_id'] . ";";
+    $result2 = $mysql->query($query2);
+    foreach($result2 as $row2){
+      print_r($result2);
+      array_push($favoriteAnimes, $row2['title']);
+    }
+  }
+  $info['favorites'] = $favoriteAnimes;
   $mysql->close();
-  return $userInfo;
+  return $info;
 }
 
 //Updates anime rating according to mal_id
@@ -421,6 +511,26 @@ global $hostSQL, $userSQL, $passSQL, $dbSQL;
 function requestProcessor($array) {
    if(array_key_exists('type', $array)){
 
+    if($array['type'] == 'favoriteAnime'){
+      echo "Favoriting anime" . PHP_EOL;
+      print_r($array);
+      addFavoriteAnime($array);
+      return fetchAnime($array);
+    } 
+    //Add friend
+    if($array['type'] == 'addFriend'){
+      echo "Adding friend" . PHP_EOL;
+      print_r($array);
+      addFriend($array);
+      return getFriends($array);
+    }
+    
+    //Get friends list
+    if($array['type'] == 'getFriends'){
+      echo "Getting friends list" . PHP_EOL;
+      print_r($array);
+      return getFriends($array);
+    }
     //Retrieve random anime limit 30
     if($array['type'] == 'searchRandAnime'){
       echo "Retrieving random animes limit 30" . PHP_EOL;

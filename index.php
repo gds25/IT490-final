@@ -22,7 +22,8 @@
 
 <h1 align="center">Anime Database</h1>
 
-<aside>
+<div align = "center">
+<aside align="center">
         <nav>
         <h3>Top Anime :</h3>
 	<div>
@@ -37,7 +38,7 @@
 	</nav>
 </aside>
 </div>
-
+</div>
 </body>
 </html>
 
