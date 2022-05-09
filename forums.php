@@ -32,13 +32,13 @@ echo $_POST['post_content'];
  <body>
 
 <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" /> 
         <meta charset=UTF-8" />
         
         <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 
 <body>
-<div id="page-wrap">
 
 <div id="topnav">
         <?php include 'navbar.php';?>
@@ -46,6 +46,16 @@ echo $_POST['post_content'];
 
 
 <form action="forums.php" method="post">
+<head> 
+        <meta name="viewport" content="width=device-width, initial-scale=1" /> 
+        <meta charset=UTF-8" />
+        <link rel="stylesheet" type="text/css" href="style.css" />
+
+        <!-- 
+                <p align = "center"><strong>View Threads</strong></p>
+                        <(include height and weight of link to fit on page)
+        -->
+</head>
    <p><strong>Create New Thread</strong></p>
   <p>Topic Title:<br>
   <input type="text" name="thread_title">
