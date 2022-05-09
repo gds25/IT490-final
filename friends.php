@@ -54,7 +54,7 @@ include('SQLFiles/SQLPublish.php');
   
   <br><br><br>
 
-   <p><strong>Friend's List: </strong></p>
+   <p align = "center"><strong>Friend's List: </strong></p>
    
   
 
