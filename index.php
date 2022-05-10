@@ -5,7 +5,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />   
+
+        <!-- code snippet taken from
+        https://www.w3schools.com/html/html_responsive.asp
+        used for responsive webpages
+        used in MULTIPLE files (cited here) -->
+
+        <meta name="viewport" content="width=device-width, initial-scale=1" />  
+        
+        <!-- end citation -->
+        
         <meta charset="UTF-8" />
         <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
@@ -22,8 +31,7 @@
 
 <h1 align="center">Anime Database</h1>
 
-<div align = "center">
-<aside align="center">
+<aside>
         <nav>
         <h3>Top Anime :</h3>
 	<div>
@@ -38,7 +46,7 @@
 	</nav>
 </aside>
 </div>
-</div>
+
 </body>
 </html>
 
