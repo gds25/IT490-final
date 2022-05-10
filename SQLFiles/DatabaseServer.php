@@ -39,6 +39,28 @@ function addFavoriteAnime($array){
     }
 }
 
+//Adding friend to friend table
+function removeFavoriteAnime($array){
+
+  global $hostSQL, $userSQL, $passSQL, $dbSQL;
+  //Establishing connection
+  $mysql = new mysqli($hostSQL, $userSQL, $passSQL, $dbSQL);
+    if ($mysql -> connect_errno){
+        return "Could not connect to mysql: ". $mysql->connect_error;
+        exit();
+    }
+
+    //Preparing statement and binding parameters
+    $stmt = "DELETE FROM favorites WHERE username='". $array['username'] ."' and mal_id = '" . $array['mal_id'] . "';";
+    //If executed correctly, return 1. Else, return the statement error
+    $result = $mysql->query($stmt);
+    $mysql->close();
+     return 1;
+
+}
+
+
+
 //Getting friends list based of username
 function getFriends($array){
   global $hostSQL, $userSQL, $passSQL, $dbSQL;
@@ -78,6 +100,35 @@ function addFriend($array){
     $stmt->bind_param('ss', $array['username'], $array['friend']);
     //If executed correctly, return 1. Else, return the statement error
     if($stmt->execute()){
+      $mysql->close();
+      return 1;
+    }else{
+      $error = $stmt->error;
+      $mysql->close();
+      return $error;
+    }
+  }
+  $mysql->close();
+  return;
+}
+
+//Adding friend to friend table
+function removeFriend($array){
+
+  global $hostSQL, $userSQL, $passSQL, $dbSQL;
+  //Establishing connection
+  $mysql = new mysqli($hostSQL, $userSQL, $passSQL, $dbSQL);
+    if ($mysql -> connect_errno){
+        return "Could not connect to mysql: ". $mysql->connect_error;
+        exit();
+    }
+  $query = "SELECT * from Users where username = '" . $array['friend'] . "' and username != '" . $array['username'] . "';";
+  $result = $mysql->query($query);
+  if(mysqli_num_rows($result) == 1){
+    //Preparing statement and binding parameters
+    $stmt = "DELETE FROM friends WHERE username='". $array['username'] ."' and friend = '" . $array['friend'] ."';";
+    //If executed correctly, return 1. Else, return the statement error
+    if($mysql->query($stmt)){
       $mysql->close();
       return 1;
     }else{
@@ -516,12 +567,26 @@ function requestProcessor($array) {
       print_r($array);
       addFavoriteAnime($array);
       return fetchAnime($array);
-    } 
+    }
+   if($array['type'] == 'removeFavorite'){
+      echo "Unfavoriting anime" . PHP_EOL;
+      print_r($array);
+      removeFavoriteAnime($array);
+      return fetchAnime($array);
+    }
+
     //Add friend
     if($array['type'] == 'addFriend'){
       echo "Adding friend" . PHP_EOL;
       print_r($array);
       addFriend($array);
+      return getFriends($array);
+    }
+    //Remove friend
+    if($array['type'] == 'removeFriend'){
+      echo "Removing friend" . PHP_EOL;
+      print_r($array);
+      removeFriend($array);
       return getFriends($array);
     }
     

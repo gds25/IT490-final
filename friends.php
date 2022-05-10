@@ -65,7 +65,19 @@ include('SQLFiles/SQLPublish.php');
       foreach ($friends as $row){
         echo $row['friend'] . "<br>";
       }
-    }else{
+    }
+    else if (!empty($_POST['remove'])){
+      $friends = publisher(array(
+        'type' => 'removeFriend',
+        'username' => $_SESSION['username'],
+        'friend' => $_POST['remove']
+      ));
+      foreach ($friends as $row){
+        echo $row['friend'] . "<br>";
+      }
+
+    }
+    else{
       $friends = publisher(array(
         'type' => 'getFriends',
         'username' => $_SESSION['username']
@@ -76,6 +88,15 @@ include('SQLFiles/SQLPublish.php');
       }
     }
    ?>
+
+
+<p>Remove Friend:<br>
+  <form form method = post>
+  <input name="remove" size="7" type="text" />
+  <input type="submit" name="submit" value="submit"/></p>
+  </form><br>
+<p>
+
 </div> 
   
 
