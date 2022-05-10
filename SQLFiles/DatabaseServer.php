@@ -325,6 +325,9 @@ function sqlSignUp($array){
 
 }
 
+//forum functions built based on this tutorial:
+//http://etutorials.org/Programming/PHP+MySQL+and+Apache+in+24+hours/Part+III+Getting+Involved+with+the+Code/Hour+14.+Creating+a+Simple+Discussion+Forum/Creating+a+Discussion+Forum/
+
 //add thread to forum
 function addThread ($array) {  //Establishing connection
   global $hostSQL, $userSQL, $passSQL, $dbSQL;
