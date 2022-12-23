@@ -9,17 +9,19 @@ WHAT YOU NEED:
 - ZeroTier VPN
 
 For Each VM Machine:
+
 Download Ubuntu disk image onto VM Virtualbox
+
 After you have to install the following packages:
-	Php
-	Php-amqplib
-	Rabbitmq-server
-	Mysql-server
-	Apache2
-	Zerotier-cli
-	VSCode or any preferred code editor
-	IPTables
-	Openssl
+	- Php
+	- Php-amqplib
+	- Rabbitmq-server
+	- Mysql-server
+	- Apache2
+	- Zerotier-cli
+	- VSCode or any preferred code editor
+	- IPTables
+	- Openssl
 
 Once installed, you must join each machine into a zerotier network where each VM has its own IP.
 
@@ -31,13 +33,13 @@ There will be 9 machines in the cluster in total: 3 Front End, 3 Backend/Databas
 
 CONFIGURING THE FRONT END
 
--All of the files within the Git Repo must be moved into var/www/html
+- All of the files within the Git Repo must be moved into var/www/html
 
--Access the SQLServer.ini within the html/SQLFiles directory
+- Access the SQLServer.ini within the html/SQLFiles directory
 
--Edit the SQLServer.ini and set the BROKER_HOST IP to the relative Backend VM’s ZeroTier IP. (So if it is a Development Front End; Set the BROKER_HOST to the Development Backend’s ZeroTier IP)
+- Edit the SQLServer.ini and set the BROKER_HOST IP to the relative Backend VM’s ZeroTier IP. (So if it is a Development Front End; Set the BROKER_HOST to the Development Backend’s ZeroTier IP)
 
--Create a new file ‘/etc/apache2/conf-available/ssl-params.conf’ with the following:
+- Create a new file ‘/etc/apache2/conf-available/ssl-params.conf’ with the following:
 (from https://www.arubacloud.com/tutorial/how-to-enable-https-protocol-with-apache-2-on-ubuntu-20-04.aspx)
 
 SSLCipherSuite EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
