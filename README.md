@@ -125,7 +125,7 @@ In the Git Repo, there is a file called animeDatabaseBackup.sql
 
 Setup the VM just like you did; however, make the Production Backend VM the master server and use the Replicated Database VM as the slave server while utilizing the animeDatabaseBackup.sql to ensure both databases have the same database information.
 
-### Setting up the Deployment Server
+### Setting up the Deployment Server:
 
 The deployment files are found in the Git Repo under the deployment directory
 
